@@ -34,55 +34,57 @@
         <div class="container--narrow">
           <div class="mb-3xl text-center">
             <h1 class="text-3xl font-bold mb-xs">Upload Your Resume</h1>
-            <p class="text-secondary">Upload your PDF resume to receive a comprehensive ATS score, structural feedback, and job matches.</p>
+            <p class="text-secondary">Upload your PDF resume to store it securely and prepare for comprehensive ATS scoring.</p>
           </div>
 
           <!-- Drag and Drop Zone -->
-          <div class="dropzone mb-2xl" id="resume-dropzone">
-            <input type="file" class="dropzone__input" id="resume-file-input" accept=".pdf">
+          <div class="dropzone mb-2xl" id="resume-dropzone" style="cursor: pointer;">
+            <input type="file" class="dropzone__input" id="resume-file-input" accept=".pdf" style="display: none;">
             <div class="dropzone__icon">
               <i data-lucide="upload-cloud"></i>
             </div>
             <h3 class="text-lg font-semibold mb-xs">Drag and drop your resume PDF here</h3>
-            <p class="text-sm text-muted mb-lg">or click to browse your files from your computer</p>
+            <p class="text-sm text-muted mb-lg">or click to browse files from your computer</p>
             <span class="badge badge--primary">PDF format only • Max 5MB</span>
           </div>
 
-          <!-- Selected File Card (Mockup State) -->
-          <div class="card p-lg mb-2xl d-flex items-center justify-between">
+          <!-- Selected File Card (Hidden until file selected) -->
+          <div class="card p-lg mb-2xl d-flex items-center justify-between d-none" id="selected-file-card">
             <div class="d-flex items-center gap-md">
               <div class="p-sm" style="background: rgba(239, 68, 68, 0.15); border-radius: var(--radius-md); color: #ef4444;">
                 <i data-lucide="file-text"></i>
               </div>
               <div>
-                <div class="text-sm font-semibold">Lokesh_Sahu_Senior_Software_Engineer.pdf</div>
-                <div class="text-xs text-muted">2.4 MB • Ready to analyze</div>
+                <div class="text-sm font-semibold" id="selected-file-name">Resume.pdf</div>
+                <div class="text-xs text-muted" id="selected-file-size">0 MB • Ready to upload</div>
               </div>
             </div>
-            <span class="badge badge--success">Ready</span>
+            <button type="button" class="btn btn--ghost btn--sm" id="btn-remove-file" style="color: var(--color-danger);" title="Remove File">
+              <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+            </button>
           </div>
 
-          <!-- Upload Progress Preview -->
-          <div class="card p-xl mb-3xl">
+          <!-- Upload Progress Preview (Hidden until upload begins) -->
+          <div class="card p-xl mb-3xl d-none" id="upload-progress-card">
             <div class="d-flex justify-between items-center text-xs mb-xs">
-              <span class="text-secondary font-medium">Pipeline Preparation</span>
-              <span class="font-mono text-accent">100% Verified</span>
+              <span class="text-secondary font-medium" id="upload-status-text">Uploading to secure storage...</span>
+              <span class="font-mono text-accent">Upload Progress</span>
             </div>
             <div class="progress-bar mb-md">
-              <div class="progress-bar__fill" style="width: 100%;"></div>
+              <div class="progress-bar__fill" id="upload-progress-fill" style="width: 0%;"></div>
             </div>
             <div class="d-flex justify-between text-2xs text-muted">
-              <span>PDF Syntax Valid</span>
-              <span>Selectable Text Detected</span>
-              <span>Ready for AI Analyzer</span>
+              <span>PDF Verification</span>
+              <span>Cloud Storage Stream</span>
+              <span>Metadata Persistence</span>
             </div>
           </div>
 
           <!-- Submit CTA -->
           <div class="d-flex gap-md">
-            <a href="analysis.html" class="btn btn--gradient btn--lg w-full text-center">
-              <i data-lucide="sparkles"></i> Run AI Resume Analysis Now
-            </a>
+            <button type="button" class="btn btn--gradient btn--lg w-full text-center" id="btn-run-upload" disabled>
+              <i data-lucide="upload"></i> Upload Resume PDF
+            </button>
           </div>
 
           <!-- Upload Guidelines Checklist -->
@@ -99,7 +101,7 @@
               </li>
               <li class="d-flex items-center gap-xs">
                 <i data-lucide="check-circle-2" style="color:var(--color-success); width:14px; height:14px;"></i>
-                Include quantifiable bullet points with numbers and percentage impact.
+                Keep file size under 5MB for optimal processing speed.
               </li>
             </ul>
           </div>
@@ -111,5 +113,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/upload.js"></script>
 </body>
 </html>

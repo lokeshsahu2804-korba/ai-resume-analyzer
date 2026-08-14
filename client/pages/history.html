@@ -37,70 +37,39 @@
       <main class="app-layout__content">
         <div class="d-flex justify-between items-center mb-2xl">
           <div>
-            <h1 class="text-3xl font-bold mb-xs">Analysis History</h1>
-            <p class="text-secondary">Compare your past resume iterations and track your score progression over time.</p>
+            <h1 class="text-3xl font-bold mb-xs">Uploaded Resumes &amp; History</h1>
+            <p class="text-secondary">Manage your uploaded resume documents and view stored versions.</p>
           </div>
         </div>
 
-        <!-- History Table -->
-        <div class="table-wrapper">
+        <!-- Empty State (Hidden when resumes exist) -->
+        <div class="card p-3xl text-center d-none" id="history-empty-state">
+          <div class="d-inline-flex p-xl mb-md" style="background: rgba(99, 102, 241, 0.1); border-radius: 50%; color: var(--color-primary-light);">
+            <i data-lucide="file-up" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-xs">No Resumes Uploaded Yet</h3>
+          <p class="text-secondary mb-xl">Upload your first resume in PDF format to get started.</p>
+          <a href="upload.html" class="btn btn--gradient btn--md">
+            <i data-lucide="upload-cloud"></i> Upload Resume
+          </a>
+        </div>
+
+        <!-- History Table Wrapper -->
+        <div class="table-wrapper" id="history-table-wrapper">
           <table class="table">
             <thead>
               <tr>
-                <th>Resume File</th>
-                <th>ATS Score</th>
-                <th>Target Role</th>
-                <th>Date Analyzed</th>
-                <th>Matched Jobs</th>
+                <th>Resume Document</th>
+                <th>Status</th>
+                <th>File Size</th>
+                <th>Uploaded Date</th>
+                <th>Download / View</th>
                 <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="history-table-body">
               <tr>
-                <td>
-                  <div class="d-flex items-center gap-sm">
-                    <i data-lucide="file-text" style="color: var(--color-primary-light);"></i>
-                    <span class="font-semibold text-primary">Senior_FullStack_Engineer_2026.pdf</span>
-                    <span class="badge badge--primary">Active</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge--success font-mono font-bold">88 / 100</span>
-                </td>
-                <td class="text-secondary">Senior Full-Stack Engineer</td>
-                <td class="text-muted">Aug 14, 2026</td>
-                <td>
-                  <span class="badge badge--match">12 Jobs</span>
-                </td>
-                <td style="text-align: right;">
-                  <div class="d-flex justify-end gap-xs">
-                    <a href="analysis.html" class="btn btn--outline btn--sm">View Report</a>
-                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>
-                  <div class="d-flex items-center gap-sm">
-                    <i data-lucide="file-text" style="color: var(--color-text-muted);"></i>
-                    <span class="text-secondary">Lokesh_Resume_V1_Draft.pdf</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge--warning font-mono font-bold">76 / 100</span>
-                </td>
-                <td class="text-secondary">Full-Stack Developer</td>
-                <td class="text-muted">Aug 10, 2026</td>
-                <td>
-                  <span class="badge badge--secondary">6 Jobs</span>
-                </td>
-                <td style="text-align: right;">
-                  <div class="d-flex justify-end gap-xs">
-                    <a href="analysis.html" class="btn btn--outline btn--sm">View Report</a>
-                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
-                  </div>
-                </td>
+                <td colspan="6" class="text-center p-xl text-muted">Loading your resumes...</td>
               </tr>
             </tbody>
           </table>
@@ -111,5 +80,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/history.js"></script>
 </body>
 </html>
