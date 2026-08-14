@@ -1,3 +1,8 @@
+/**
+ * Express Application Setup (app.js)
+ * Configures global middleware chain, API route mounting, and centralized error handling.
+ */
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -7,47 +12,59 @@ const cookieParser = require('cookie-parser');
 // Load environment variables
 require('dotenv').config();
 
+// Import middleware and routes
+const { apiLimiter } = require('./middleware/rateLimiter.middleware');
+const notFoundHandler = require('./middleware/notFound.middleware');
+const errorHandler = require('./middleware/error.middleware');
+const routes = require('./routes');
+
 const app = express();
 
-// ---------------------
-// Middleware
-// ---------------------
+// ---------------------------------------------------------------------------
+// 1. Core Security & Pre-Routing Middleware
+// ---------------------------------------------------------------------------
 
-// Security headers
+// Set security HTTP headers
 app.use(helmet());
 
-// CORS — allow requests from the frontend origin
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5500',
-  credentials: true
-}));
+// Cross-Origin Resource Sharing
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5500',
+    credentials: true
+  })
+);
 
-// Parse JSON request bodies
-app.use(express.json());
+// Apply rate limiting to all /api requests
+app.use('/api', apiLimiter);
 
-// Parse URL-encoded request bodies
-app.use(express.urlencoded({ extended: true }));
+// Body Parsers
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Parse cookies (needed for JWT httpOnly cookies in later phases)
+// Cookie Parser (for JWT session cookies)
 app.use(cookieParser());
 
-// HTTP request logging
+// HTTP Request Logging (disabled during automated test runs)
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// ---------------------
-// Routes
-// ---------------------
+// ---------------------------------------------------------------------------
+// 2. API Routes
+// ---------------------------------------------------------------------------
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    service: 'express',
-    environment: process.env.NODE_ENV || 'development',
-    timestamp: new Date().toISOString()
-  });
-});
+// Mount all modular routes under /api
+app.use('/api', routes);
+
+// ---------------------------------------------------------------------------
+// 3. Post-Routing & Error Handling Middleware
+// ---------------------------------------------------------------------------
+
+// Catch unmatched routes (404)
+app.use(notFoundHandler);
+
+// Centralized Global Error Handler
+app.use(errorHandler);
 
 module.exports = app;
