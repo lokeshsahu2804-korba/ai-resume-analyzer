@@ -1,61 +1,43 @@
 /**
  * Authentication Routes (auth.routes.js)
- * Signup, login, logout, and token management endpoints (Auth logic implemented in Phase 5).
+ * Signup, login, logout, and session profile endpoints.
  */
 
 const express = require('express');
 const router = express.Router();
+
+const authController = require('../controllers/auth.controller');
 const validate = require('../middleware/validate.middleware');
 const { signupSchema, loginSchema } = require('../validators/auth.validator');
 const { authLimiter } = require('../middleware/rateLimiter.middleware');
-const ApiResponse = require('../utils/ApiResponse');
-const asyncHandler = require('../utils/asyncHandler');
+const { requireAuth } = require('../middleware/auth.middleware');
 
 /**
  * @route   POST /api/auth/signup
- * @desc    Register a new user account (Validation active, controller stub for Phase 5)
+ * @desc    Register a new user account
  * @access  Public
  */
-router.post(
-  '/signup',
-  authLimiter,
-  validate(signupSchema),
-  asyncHandler(async (req, res) => {
-    // Validated payload available at req.body
-    return ApiResponse.created(res, {
-      message: 'Signup validation passed. User registration logic will be active in Phase 5.',
-      receivedEmail: req.body.email
-    });
-  })
-);
+router.post('/signup', authLimiter, validate(signupSchema), authController.signup);
 
 /**
  * @route   POST /api/auth/login
- * @desc    Authenticate user & issue session cookie (Validation active, controller stub for Phase 5)
+ * @desc    Authenticate user & issue session cookie
  * @access  Public
  */
-router.post(
-  '/login',
-  authLimiter,
-  validate(loginSchema),
-  asyncHandler(async (req, res) => {
-    return ApiResponse.success(res, {
-      message: 'Login validation passed. Authentication logic will be active in Phase 5.',
-      receivedEmail: req.body.email
-    });
-  })
-);
+router.post('/login', authLimiter, validate(loginSchema), authController.login);
 
 /**
  * @route   POST /api/auth/logout
- * @desc    Clear authentication cookies
+ * @desc    Clear authentication cookie
  * @access  Public
  */
-router.post(
-  '/logout',
-  asyncHandler(async (req, res) => {
-    return ApiResponse.success(res, null, 'Logged out successfully (stub)');
-  })
-);
+router.post('/logout', authController.logout);
+
+/**
+ * @route   GET /api/auth/me
+ * @desc    Get currently logged in user profile
+ * @access  Protected
+ */
+router.get('/me', requireAuth, authController.getMe);
 
 module.exports = router;
