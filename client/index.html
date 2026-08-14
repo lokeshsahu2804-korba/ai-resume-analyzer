@@ -3,40 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AI-powered resume analysis and job matching platform. Get your resume scored, receive actionable improvement suggestions, and find matching jobs.">
-  <title>AI Resume Analyzer & Job Matcher</title>
+  <meta name="description" content="AI-powered Resume Analyzer and ATS Job Matcher. Optimize your resume for Applicant Tracking Systems, get instant scoring, actionable bullet point enhancements, and semantic job recommendations.">
+  <title>ResumeAI — AI Resume Analyzer & Job Matcher</title>
+  
+  <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/utilities.css">
+  <link rel="stylesheet" href="css/pages/landing.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-  <header class="header">
-    <div class="container">
-      <h1 class="header__title">AI Resume Analyzer</h1>
-      <p class="header__subtitle">Analyze your resume. Match with jobs. Land interviews.</p>
-    </div>
-  </header>
+  <!-- Global Header Navigation Mount -->
+  <div id="navbar-mount"></div>
 
-  <main class="main">
-    <div class="container">
-      <section class="hero">
-        <p class="hero__text">
-          Welcome to the AI Resume Analyzer &amp; Job Matcher. This platform is
-          currently under development. Features are being built phase by phase.
-        </p>
-        <div class="hero__status">
-          <span class="status-badge">Phase 1 — Foundation</span>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-glow"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <i data-lucide="sparkles"></i>
+        <span>AI-Powered Career Platform • Version 1.0</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Turn Your Resume Into An <br>
+        <span class="text-gradient">Interview-Winning Machine</span>
+      </h1>
+      
+      <p class="hero-description">
+        Beat the ATS filter and stand out to recruiters. Get comprehensive ATS scoring, tailored keyword gap analysis, instant rewrite suggestions, and AI-curated job matches.
+      </p>
+
+      <div class="hero-actions">
+        <a href="pages/upload.html" class="btn btn--gradient btn--lg">
+          <i data-lucide="file-up"></i> Analyze My Resume Free
+        </a>
+        <a href="pages/jobs.html" class="btn btn--outline btn--lg">
+          <i data-lucide="search"></i> Browse Matched Jobs
+        </a>
+      </div>
+
+      <div class="d-flex items-center justify-center gap-xl mt-2xl text-xs text-muted">
+        <div class="d-flex items-center gap-xs">
+          <i data-lucide="check-circle" style="color:var(--color-success); width:16px; height:16px;"></i>
+          <span>Instant ATS Score</span>
         </div>
-      </section>
+        <div class="d-flex items-center gap-xs">
+          <i data-lucide="check-circle" style="color:var(--color-success); width:16px; height:16px;"></i>
+          <span>Keyword Gap Analysis</span>
+        </div>
+        <div class="d-flex items-center gap-xs">
+          <i data-lucide="check-circle" style="color:var(--color-success); width:16px; height:16px;"></i>
+          <span>No Credit Card Needed</span>
+        </div>
+      </div>
     </div>
-  </main>
+  </section>
 
+  <!-- Live Analysis Showcase Preview -->
+  <section class="preview-section">
+    <div class="container">
+      <div class="preview-window">
+        <div class="preview-window__bar">
+          <div class="preview-dot preview-dot--red"></div>
+          <div class="preview-dot preview-dot--yellow"></div>
+          <div class="preview-dot preview-dot--green"></div>
+          <span class="text-xs text-muted font-mono" style="margin-left: 0.5rem;">ResumeAI Analysis Report Preview — Senior_FullStack_Resume.pdf</span>
+        </div>
+        
+        <div class="preview-window__body">
+          <div class="d-grid grid-cols-3 gap-xl items-center">
+            
+            <!-- ATS Gauge Column -->
+            <div class="card card--glass text-center p-xl">
+              <span class="badge badge--success mb-md">Overall ATS Fit</span>
+              <div class="ats-gauge">
+                <svg viewBox="0 0 120 120">
+                  <defs>
+                    <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#10b981" />
+                      <stop offset="100%" stop-color="#06b6d4" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="ats-gauge__circle-bg" cx="60" cy="60" r="50" />
+                  <circle class="ats-gauge__circle-fill" cx="60" cy="60" r="50" stroke-dasharray="314.15" stroke-dashoffset="37.69" />
+                </svg>
+                <div class="ats-gauge__content">
+                  <div class="ats-gauge__score">88</div>
+                  <div class="ats-gauge__label">Score / 100</div>
+                </div>
+              </div>
+              <p class="text-xs text-muted mt-md">Strong ATS score. Excellent keyword alignment with Full-Stack Senior roles.</p>
+            </div>
+
+            <!-- Breakdown Bars Column -->
+            <div class="card card--glass p-xl">
+              <h3 class="text-base font-semibold mb-lg">Score Category Breakdown</h3>
+              <div class="d-flex flex-col gap-md">
+                <div>
+                  <div class="d-flex justify-between text-xs mb-xs">
+                    <span class="text-secondary">Skills & Keywords Relevance</span>
+                    <span class="font-mono font-bold text-accent">18 / 20</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
+                </div>
+                <div>
+                  <div class="d-flex justify-between text-xs mb-xs">
+                    <span class="text-secondary">Experience Quality & Impact</span>
+                    <span class="font-mono font-bold text-accent">17 / 20</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-bar__fill" style="width: 85%;"></div></div>
+                </div>
+                <div>
+                  <div class="d-flex justify-between text-xs mb-xs">
+                    <span class="text-secondary">Quantifiable Achievements</span>
+                    <span class="font-mono font-bold text-accent">9 / 10</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
+                </div>
+                <div>
+                  <div class="d-flex justify-between text-xs mb-xs">
+                    <span class="text-secondary">Structure & Formatting</span>
+                    <span class="font-mono font-bold text-accent">14 / 15</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-bar__fill" style="width: 93%;"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Actionable Suggestions Column -->
+            <div class="card card--glass p-xl">
+              <div class="d-flex justify-between items-center mb-md">
+                <h3 class="text-base font-semibold">AI Improvement Insights</h3>
+                <span class="badge badge--warning">3 High Priority</span>
+              </div>
+              <div class="d-flex flex-col gap-sm">
+                <div class="p-sm" style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-left: 3px solid var(--color-warning);">
+                  <div class="text-xs font-semibold text-primary">Strengthen Node.js Action Verbs</div>
+                  <div class="text-xs text-muted mt-2xs">Replace "Helped with backend" with "Architected high-throughput REST APIs..."</div>
+                </div>
+                <div class="p-sm" style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border-left: 3px solid var(--color-primary);">
+                  <div class="text-xs font-semibold text-primary">Add Missing Trending Keywords</div>
+                  <div class="text-xs text-muted mt-2xs">Add <code>Docker</code> and <code>CI/CD Pipelines</code> to your skills matrix.</div>
+                </div>
+                <a href="pages/analysis.html" class="btn btn--outline btn--sm mt-xs w-full text-center">
+                  View Full Sample Analysis <i data-lucide="arrow-right" style="width:14px; height:14px;"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Core Capabilities</div>
+        <h2>Everything You Need To Fast-Track Your Career</h2>
+        <p class="text-secondary mt-sm">Built for modern tech job seekers. We combine deterministic parsing with state-of-the-art AI analysis.</p>
+      </div>
+
+      <div class="d-grid grid-cols-3 gap-xl">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper feature-icon-wrapper--indigo">
+            <i data-lucide="gauge"></i>
+          </div>
+          <h3 class="text-xl mb-sm">Dual-Engine ATS Scoring</h3>
+          <p class="text-sm text-secondary">A hybrid 100-point scoring algorithm combining exact deterministic keyword parsing with deep contextual AI evaluation.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper feature-icon-wrapper--pink">
+            <i data-lucide="crosshair"></i>
+          </div>
+          <h3 class="text-xl mb-sm">Smart Job Matcher</h3>
+          <p class="text-sm text-secondary">Calculates your real match percentage against live job postings and highlights your specific skill gaps.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper feature-icon-wrapper--emerald">
+            <i data-lucide="file-edit"></i>
+          </div>
+          <h3 class="text-xl mb-sm">Actionable Bullet Enhancements</h3>
+          <p class="text-sm text-secondary">Transforms weak experience points into quantifiable, high-impact achievements tailored to recruiter expectations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="container">
+    <div class="cta-banner">
+      <h2 class="text-3xl font-bold mb-md">Ready to Upgrade Your Job Search?</h2>
+      <p class="text-secondary mb-xl" style="max-width: 540px; margin-left: auto; margin-right: auto;">
+        Upload your resume right now and receive a full ATS breakdown and instant recommendations in seconds.
+      </p>
+      <a href="pages/upload.html" class="btn btn--gradient btn--lg">
+        <i data-lucide="upload-cloud"></i> Upload Resume Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 AI Resume Analyzer. Under active development.</p>
+      <div class="footer__grid">
+        <div>
+          <a href="index.html" class="navbar__brand">
+            <div class="navbar__logo-icon">
+              <i data-lucide="file-check-2"></i>
+            </div>
+            <span class="navbar__brand-text">ResumeAI</span>
+          </a>
+          <p class="footer__brand-p text-secondary">
+            AI-driven resume optimization and semantic job matching platform designed for ambitious developers and professionals.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Product</h4>
+          <ul class="footer__list">
+            <li><a href="pages/upload.html" class="footer__link">Resume Analyzer</a></li>
+            <li><a href="pages/jobs.html" class="footer__link">Job Matcher</a></li>
+            <li><a href="pages/pricing.html" class="footer__link">Pricing Plans</a></li>
+            <li><a href="pages/history.html" class="footer__link">Analysis History</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Account</h4>
+          <ul class="footer__list">
+            <li><a href="pages/login.html" class="footer__link">Sign In</a></li>
+            <li><a href="pages/signup.html" class="footer__link">Create Account</a></li>
+            <li><a href="pages/dashboard.html" class="footer__link">Dashboard</a></li>
+            <li><a href="pages/settings.html" class="footer__link">Settings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Admin & Dev</h4>
+          <ul class="footer__list">
+            <li><a href="pages/admin/dashboard.html" class="footer__link">Admin Portal</a></li>
+            <li><a href="pages/admin/users.html" class="footer__link">User Management</a></li>
+            <li><a href="pages/admin/jobs.html" class="footer__link">Job Database</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>&copy; 2026 ResumeAI Platform. Built for developers & professionals.</span>
+        <span>Vanilla HTML • CSS • JavaScript Architecture</span>
+      </div>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="js/utils/constants.js"></script>
-  <script src="js/app.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

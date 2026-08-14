@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ResumeAI Pricing Plans — Compare Free vs Premium features and unlock unlimited AI resume analyses and semantic job matching.">
+  <title>Pricing & Plans — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/landing.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Global Header Navigation Mount -->
+  <div id="navbar-mount"></div>
+
+  <main class="container py-4xl">
+    <div class="section-header text-center mb-4xl">
+      <div class="badge badge--primary mb-md">Simple, Transparent Pricing</div>
+      <h1 class="text-4xl font-bold mb-md">Invest in Your Next Career Leap</h1>
+      <p class="text-lg text-secondary">Start free with 3 resume analyses per month, or upgrade to Premium for unlimited AI insights.</p>
+    </div>
+
+    <!-- Pricing Cards Grid -->
+    <div class="d-grid grid-cols-2 gap-2xl mb-4xl" style="max-width: 960px; margin-left: auto; margin-right: auto;">
+      
+      <!-- Free Plan Card -->
+      <div class="card p-2xl d-flex flex-col justify-between">
+        <div>
+          <div class="d-flex justify-between items-center mb-md">
+            <h2 class="text-2xl font-bold">Free Plan</h2>
+            <span class="badge badge--secondary">Basic</span>
+          </div>
+          <p class="text-sm text-secondary mb-xl">Essential ATS scoring for individual job seekers starting their search.</p>
+          
+          <div class="mb-2xl">
+            <span class="text-4xl font-extrabold font-mono text-primary">₹0</span>
+            <span class="text-sm text-muted">/ forever</span>
+          </div>
+
+          <ul class="d-flex flex-col gap-md mb-2xl" style="list-style:none;">
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span><strong>3 Resume Analyses</strong> per month</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span>Overall ATS Score (0-100)</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span>Deterministic Keyword Match</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm text-muted">
+              <i data-lucide="x" style="color:var(--color-danger); width:18px; height:18px;"></i>
+              <span>AI Deep Improvement Suggestions</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm text-muted">
+              <i data-lucide="x" style="color:var(--color-danger); width:18px; height:18px;"></i>
+              <span>Semantic AI Job Matching</span>
+            </li>
+          </ul>
+        </div>
+
+        <a href="signup.html" class="btn btn--outline btn--lg w-full text-center">
+          Get Started Free
+        </a>
+      </div>
+
+      <!-- Premium Plan Card -->
+      <div class="card card--glow p-2xl d-flex flex-col justify-between" style="border-color: var(--color-primary);">
+        <div>
+          <div class="d-flex justify-between items-center mb-md">
+            <h2 class="text-2xl font-bold">Premium Pro</h2>
+            <span class="badge badge--gradient">Most Popular</span>
+          </div>
+          <p class="text-sm text-secondary mb-xl">Full access to advanced AI resume coaching, bullet point rewriters & smart matching.</p>
+          
+          <div class="mb-2xl">
+            <span class="text-4xl font-extrabold font-mono text-gradient">₹499</span>
+            <span class="text-sm text-muted">/ month (test mode)</span>
+          </div>
+
+          <ul class="d-flex flex-col gap-md mb-2xl" style="list-style:none;">
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span><strong>Unlimited Resume Analyses</strong></span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span>Detailed 7-Category ATS Breakdown</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span><strong>AI Actionable Suggestions & Rewrites</strong></span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span><strong>Semantic Job Matching</strong> with match scores</span>
+            </li>
+            <li class="d-flex items-center gap-sm text-sm">
+              <i data-lucide="check" style="color:var(--color-success); width:18px; height:18px;"></i>
+              <span>Unlimited Analysis History & Export</span>
+            </li>
+          </ul>
+        </div>
+
+        <button class="btn btn--gradient btn--lg w-full text-center" onclick="showToast('Razorpay Payment modal will activate in Phase 15!', 'info', 'Payment Preview')">
+          <i data-lucide="sparkles"></i> Upgrade to Premium (₹499)
+        </button>
+      </div>
+
+    </div>
+
+    <!-- FAQ Accordion Container -->
+    <div class="card p-2xl" style="max-width: 800px; margin: 0 auto;">
+      <h2 class="text-2xl font-bold mb-xl text-center">Frequently Asked Questions</h2>
+      <div class="d-flex flex-col gap-lg">
+        <div class="p-md" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+          <h3 class="text-base font-semibold mb-xs">How does the ATS score calculation work?</h3>
+          <p class="text-sm text-secondary">We use a dual-engine architecture: objective formatting, contact details, and keyword metrics are scored deterministically, while experience quality and semantic fit are assessed with contextual AI.</p>
+        </div>
+        <div class="p-md" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+          <h3 class="text-base font-semibold mb-xs">Can I cancel my premium subscription anytime?</h3>
+          <p class="text-sm text-secondary">Yes. In our MVP, payments are 30-day one-time access passes. There are no recurring surprise charges.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center text-xs text-muted">
+      &copy; 2026 ResumeAI Platform • Free & Premium Pricing Tiers
+    </div>
+  </footer>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>
