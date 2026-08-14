@@ -1,24 +1,41 @@
 /**
  * AI Resume Analyzer - Navigation Bar Component (navbar.js)
+ * Mounts responsive header navigation with dynamic auth session detection.
  */
 
 import { qs, renderIcons } from '../utils/dom.js';
+import { authService } from '../services/auth.service.js';
 
 /**
  * Mounts the top navigation bar into #navbar-mount if present.
  * @param {Object} [options={}]
  * @param {'public'|'app'|'admin'} [options.type='public'] - Nav type
  */
-export function renderNavbar(options = {}) {
+export async function renderNavbar(options = {}) {
   const mount = qs('#navbar-mount');
   if (!mount) return;
 
   const currentPath = window.location.pathname;
-  const isApp = options.type === 'app' || currentPath.includes('/pages/dashboard') || currentPath.includes('/pages/analysis') || currentPath.includes('/pages/jobs') || currentPath.includes('/pages/upload');
+  const isApp =
+    options.type === 'app' ||
+    currentPath.includes('/pages/dashboard') ||
+    currentPath.includes('/pages/analysis') ||
+    currentPath.includes('/pages/jobs') ||
+    currentPath.includes('/pages/upload') ||
+    currentPath.includes('/pages/history') ||
+    currentPath.includes('/pages/applications') ||
+    currentPath.includes('/pages/saved-jobs') ||
+    currentPath.includes('/pages/profile') ||
+    currentPath.includes('/pages/settings');
+
   const isAdmin = options.type === 'admin' || currentPath.includes('/admin/');
 
   // Relative path resolution
-  const basePath = currentPath.includes('/pages/') ? (currentPath.includes('/admin/') ? '../../' : '../') : './';
+  const basePath = currentPath.includes('/pages/')
+    ? currentPath.includes('/admin/')
+      ? '../../'
+      : '../'
+    : './';
 
   let navLinksHtml = '';
 
@@ -58,7 +75,7 @@ export function renderNavbar(options = {}) {
           <i data-lucide="sparkles" style="width:14px; height:14px;"></i> Pro Plan
         </a>
         <a href="${basePath}pages/profile.html" class="btn btn--outline btn--sm">Profile</a>
-        <a href="${basePath}pages/login.html" class="btn btn--secondary btn--sm">Log Out</a>
+        <button type="button" class="btn btn--secondary btn--sm" id="navbar-logout-btn">Log Out</button>
       </div>
     `;
   } else {
@@ -99,6 +116,14 @@ export function renderNavbar(options = {}) {
         links.classList.toggle('d-flex');
         links.classList.toggle('navbar__links--mobile');
       }
+    });
+  }
+
+  // Setup logout trigger
+  const logoutBtn = qs('#navbar-logout-btn', mount);
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      await authService.logout();
     });
   }
 
