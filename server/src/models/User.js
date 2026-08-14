@@ -99,16 +99,11 @@ const userSchema = new mongoose.Schema(
 // ---------------------------------------------------------------------------
 
 // Pre-save hook: Hash password with 12 salt rounds before saving
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
 
-  try {
-    const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    next(err);
-  }
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Instance method: Verify candidate password against hashed password

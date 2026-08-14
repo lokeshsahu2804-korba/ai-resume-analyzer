@@ -1,21 +1,26 @@
 /**
  * AI Resume Analyzer - Dashboard Sidebar Component (sidebar.js)
+ * Mounts responsive dashboard and admin sidebar with dynamic user profile & logout trigger.
  */
 
 import { qs, renderIcons } from '../utils/dom.js';
+import { authService } from '../services/auth.service.js';
 
 /**
  * Mounts the dashboard / admin sidebar into #sidebar-mount if present.
  * @param {Object} [options={}]
  * @param {boolean} [options.isAdmin=false] - Whether to render admin menu
  */
-export function renderSidebar(options = {}) {
+export async function renderSidebar(options = {}) {
   const mount = qs('#sidebar-mount');
   if (!mount) return;
 
+  // Initialize auth state to get real user if available
+  const user = await authService.initAuth();
+
   const currentPath = window.location.pathname;
-  const isAdmin = options.isAdmin || currentPath.includes('/admin/');
-  const basePath = currentPath.includes('/admin/') ? '../../' : (currentPath.includes('/pages/') ? '../' : './');
+  const isAdmin = options.isAdmin || currentPath.includes('/admin/') || user?.role === 'admin';
+  const basePath = currentPath.includes('/admin/') ? '../../' : currentPath.includes('/pages/') ? '../' : './';
 
   let navItemsHtml = '';
 
@@ -92,6 +97,16 @@ export function renderSidebar(options = {}) {
     `;
   }
 
+  // Determine user display names and initials
+  const displayName = user?.name || (isAdmin ? 'Platform Admin' : 'Demo User');
+  const initials = displayName
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+  const planLabel = user?.role === 'admin' ? 'Superadmin' : user?.plan === 'premium' ? 'Pro Plan' : 'Free Tier';
+
   mount.innerHTML = `
     <aside class="app-layout__sidebar" id="app-sidebar">
       <div class="sidebar__header">
@@ -109,18 +124,26 @@ export function renderSidebar(options = {}) {
 
       <div class="sidebar__footer">
         <div class="sidebar__user-profile">
-          <div class="sidebar__avatar">JD</div>
+          <div class="sidebar__avatar">${initials}</div>
           <div class="sidebar__user-info">
-            <div class="sidebar__user-name">John Doe</div>
-            <div class="sidebar__user-plan">${isAdmin ? 'Platform Admin' : 'Free Tier'}</div>
+            <div class="sidebar__user-name">${displayName}</div>
+            <div class="sidebar__user-plan">${planLabel}</div>
           </div>
-          <a href="${basePath}pages/login.html" title="Log Out" style="color: var(--color-text-muted);">
+          <button type="button" id="sidebar-logout-btn" title="Log Out" style="background:none; border:none; color: var(--color-text-muted); cursor:pointer; padding: 4px;">
             <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
-          </a>
+          </button>
         </div>
       </div>
     </aside>
   `;
+
+  // Attach logout event handler
+  const logoutBtn = qs('#sidebar-logout-btn', mount);
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      await authService.logout();
+    });
+  }
 
   renderIcons();
 }
