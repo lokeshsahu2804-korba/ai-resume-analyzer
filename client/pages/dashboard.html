@@ -40,7 +40,7 @@
         <!-- Hero Greeting Banner -->
         <div class="dashboard-hero">
           <div class="dashboard-hero__text">
-            <h1>Welcome back, <span class="text-gradient">John!</span></h1>
+            <h1>Welcome back, <span class="text-gradient" id="dashboard-greeting-name">User</span>!</h1>
             <p class="text-secondary">Your active resume is performing in the top <strong>15%</strong> of applicants for Senior Full-Stack roles.</p>
           </div>
           <a href="analysis.html" class="btn btn--primary btn--md">
@@ -86,8 +86,8 @@
           <div class="stat-card">
             <div>
               <div class="stat-card__label">Monthly Limit</div>
-              <div class="stat-card__value">1<span class="text-sm text-muted">/3</span></div>
-              <span class="badge badge--warning">Free tier usage</span>
+              <div class="stat-card__value" id="dashboard-monthly-limit-value">0<span class="text-sm text-muted">/3</span></div>
+              <span class="badge badge--warning" id="dashboard-monthly-limit-badge">Free tier usage</span>
             </div>
             <div class="stat-card__icon stat-card__icon--warning">
               <i data-lucide="zap"></i>
@@ -189,5 +189,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/dashboard.js"></script>
 </body>
 </html>
