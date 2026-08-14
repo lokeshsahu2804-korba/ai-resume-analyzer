@@ -39,11 +39,10 @@
           <div class="card p-2xl mb-3xl">
             <!-- Avatar & Header -->
             <div class="d-flex items-center gap-xl pb-xl mb-xl" style="border-bottom: 1px solid var(--color-border);">
-              <div class="sidebar__avatar" style="width: 4.5rem; height: 4.5rem; font-size: 1.5rem;">JD</div>
+              <div class="sidebar__avatar" id="profile-header-avatar" style="width: 4.5rem; height: 4.5rem; font-size: 1.5rem;">--</div>
               <div>
-                <h2 class="text-xl font-bold">John Doe</h2>
-                <div class="text-xs text-muted mb-sm">Senior Full-Stack Engineer • Bengaluru, India</div>
-                <button class="btn btn--outline btn--sm">Change Avatar</button>
+                <h2 class="text-xl font-bold" id="profile-header-name">Loading Profile...</h2>
+                <div class="text-xs text-muted mb-sm" id="profile-header-subtitle">Member</div>
               </div>
             </div>
 
@@ -52,49 +51,49 @@
               <div class="d-grid grid-cols-2 gap-xl">
                 <div class="form-group">
                   <label class="form-label" for="profile-name">Full Name</label>
-                  <input type="text" id="profile-name" class="form-input" value="John Doe">
+                  <input type="text" id="profile-name" class="form-input" placeholder="Your full name" required>
                 </div>
 
                 <div class="form-group">
                   <label class="form-label" for="profile-email">Email Address</label>
-                  <input type="email" id="profile-email" class="form-input" value="user@example.com" disabled>
+                  <input type="email" id="profile-email" class="form-input" disabled>
                   <span class="form-hint">Email cannot be changed directly.</span>
                 </div>
 
                 <div class="form-group">
                   <label class="form-label" for="profile-phone">Phone Number</label>
-                  <input type="tel" id="profile-phone" class="form-input" value="+91 98765 43210">
+                  <input type="tel" id="profile-phone" class="form-input" placeholder="+91 98765 43210">
                 </div>
 
                 <div class="form-group">
                   <label class="form-label" for="profile-location">Location</label>
-                  <input type="text" id="profile-location" class="form-input" value="Bengaluru, Karnataka, India">
+                  <input type="text" id="profile-location" class="form-input" placeholder="e.g. Bengaluru, India">
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="profile-bio">Professional Summary / Bio</label>
-                <textarea id="profile-bio" class="form-textarea" rows="3">Senior Full-Stack Engineer with 6+ years specializing in Node.js microservices, TypeScript, React, and high-throughput transactional database architectures.</textarea>
+                <textarea id="profile-bio" class="form-textarea" rows="3" placeholder="Brief career summary..."></textarea>
               </div>
 
               <div class="d-grid grid-cols-3 gap-md">
                 <div class="form-group">
                   <label class="form-label" for="profile-linkedin">LinkedIn Profile URL</label>
-                  <input type="url" id="profile-linkedin" class="form-input" value="https://linkedin.com/in/johndoe">
+                  <input type="url" id="profile-linkedin" class="form-input" placeholder="https://linkedin.com/in/username">
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="profile-github">GitHub Profile URL</label>
-                  <input type="url" id="profile-github" class="form-input" value="https://github.com/johndoe">
+                  <input type="url" id="profile-github" class="form-input" placeholder="https://github.com/username">
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="profile-portfolio">Portfolio / Website</label>
-                  <input type="url" id="profile-portfolio" class="form-input" value="https://johndoe.dev">
+                  <input type="url" id="profile-portfolio" class="form-input" placeholder="https://yourwebsite.com">
                 </div>
               </div>
 
               <div class="d-flex justify-end gap-md pt-lg" style="border-top: 1px solid var(--color-border);">
-                <button type="button" class="btn btn--secondary">Cancel</button>
-                <button type="button" class="btn btn--gradient" onclick="showToast('Profile updated successfully!', 'success')">
+                <button type="reset" class="btn btn--secondary">Reset</button>
+                <button type="submit" id="btn-save-profile" class="btn btn--gradient">
                   Save Changes
                 </button>
               </div>
@@ -108,5 +107,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/profile.js"></script>
 </body>
 </html>
