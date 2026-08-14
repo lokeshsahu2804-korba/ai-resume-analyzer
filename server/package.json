@@ -1,0 +1,27 @@
+{
+  "name": "ai-resume-analyzer-server",
+  "version": "1.0.0",
+  "description": "Express backend API for AI Resume Analyzer & Job Matcher",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:admin": "echo \"Admin seed script not implemented yet. Coming in a later phase.\"",
+    "test": "echo \"No tests configured yet. Coming in Phase 18.\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "morgan": "^1.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
