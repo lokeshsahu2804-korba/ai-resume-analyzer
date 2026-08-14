@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ResumeAI User Dashboard — View recent resume analyses, ATS health scores, and matched jobs.">
+  <title>Dashboard — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/dashboard.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <!-- Main Content Area -->
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Workspace /</span>
+          <span class="text-sm font-semibold text-primary">Dashboard Overview</span>
+        </div>
+        <div class="d-flex items-center gap-md">
+          <a href="upload.html" class="btn btn--gradient btn--sm">
+            <i data-lucide="upload-cloud"></i> Upload New Resume
+          </a>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        <!-- Hero Greeting Banner -->
+        <div class="dashboard-hero">
+          <div class="dashboard-hero__text">
+            <h1>Welcome back, <span class="text-gradient">John!</span></h1>
+            <p class="text-secondary">Your active resume is performing in the top <strong>15%</strong> of applicants for Senior Full-Stack roles.</p>
+          </div>
+          <a href="analysis.html" class="btn btn--primary btn--md">
+            View Latest Analysis Report <i data-lucide="arrow-up-right"></i>
+          </a>
+        </div>
+
+        <!-- 4 Stat Cards -->
+        <div class="d-grid grid-cols-4 gap-xl mb-2xl">
+          <div class="stat-card">
+            <div>
+              <div class="stat-card__label">Active ATS Score</div>
+              <div class="stat-card__value text-success">88<span class="text-sm text-muted">/100</span></div>
+              <span class="badge badge--success">+6 from last version</span>
+            </div>
+            <div class="stat-card__icon stat-card__icon--success">
+              <i data-lucide="gauge"></i>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-card__label">Matched Jobs</div>
+              <div class="stat-card__value">12</div>
+              <span class="badge badge--match">&gt;85% match</span>
+            </div>
+            <div class="stat-card__icon stat-card__icon--cyan">
+              <i data-lucide="briefcase"></i>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-card__label">Active Applications</div>
+              <div class="stat-card__value">4</div>
+              <span class="badge badge--info">2 Interviews scheduled</span>
+            </div>
+            <div class="stat-card__icon stat-card__icon--primary">
+              <i data-lucide="send"></i>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div>
+              <div class="stat-card__label">Monthly Limit</div>
+              <div class="stat-card__value">1<span class="text-sm text-muted">/3</span></div>
+              <span class="badge badge--warning">Free tier usage</span>
+            </div>
+            <div class="stat-card__icon stat-card__icon--warning">
+              <i data-lucide="zap"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column Layout: Recent Analysis & Top Matched Jobs -->
+        <div class="d-grid grid-cols-2 gap-2xl">
+          
+          <!-- Recent Analysis Card -->
+          <div class="card p-xl">
+            <div class="card__header">
+              <div>
+                <h2 class="card__title">Current Resume Snapshot</h2>
+                <div class="card__subtitle">Senior_FullStack_Engineer_2026.pdf</div>
+              </div>
+              <span class="badge badge--success">Scored 88/100</span>
+            </div>
+
+            <div class="d-flex flex-col gap-md">
+              <div>
+                <div class="d-flex justify-between text-xs mb-xs">
+                  <span class="text-secondary">Skills &amp; Keywords</span>
+                  <span class="font-mono text-accent">18/20</span>
+                </div>
+                <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
+              </div>
+
+              <div>
+                <div class="d-flex justify-between text-xs mb-xs">
+                  <span class="text-secondary">Experience Quality</span>
+                  <span class="font-mono text-accent">17/20</span>
+                </div>
+                <div class="progress-bar"><div class="progress-bar__fill" style="width: 85%;"></div></div>
+              </div>
+
+              <div>
+                <div class="d-flex justify-between text-xs mb-xs">
+                  <span class="text-secondary">Structure &amp; Formatting</span>
+                  <span class="font-mono text-accent">14/15</span>
+                </div>
+                <div class="progress-bar"><div class="progress-bar__fill" style="width: 93%;"></div></div>
+              </div>
+            </div>
+
+            <div class="card__footer">
+              <span class="text-xs text-muted">Uploaded 2 days ago</span>
+              <a href="analysis.html" class="btn btn--outline btn--sm">Full Report</a>
+            </div>
+          </div>
+
+          <!-- Top Job Matches Preview -->
+          <div class="card p-xl">
+            <div class="card__header">
+              <div>
+                <h2 class="card__title">Top Job Matches</h2>
+                <div class="card__subtitle">Based on your parsed skills</div>
+              </div>
+              <a href="jobs.html" class="text-xs text-accent">View all 12 &rarr;</a>
+            </div>
+
+            <div class="d-flex flex-col gap-md">
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div>
+                  <div class="text-sm font-semibold">Lead Full Stack Engineer</div>
+                  <div class="text-xs text-muted">Stripe • Remote (India) • ₹35L - ₹45L</div>
+                </div>
+                <span class="badge badge--match">94% Match</span>
+              </div>
+
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div>
+                  <div class="text-sm font-semibold">Senior Node.js Backend Architect</div>
+                  <div class="text-xs text-muted">Razorpay • Bengaluru • ₹30L - ₹40L</div>
+                </div>
+                <span class="badge badge--match">91% Match</span>
+              </div>
+
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div>
+                  <div class="text-sm font-semibold">AI Full Stack Developer</div>
+                  <div class="text-xs text-muted">Swiggy • Hybrid • ₹28L - ₹36L</div>
+                </div>
+                <span class="badge badge--match">88% Match</span>
+              </div>
+            </div>
+
+            <div class="card__footer">
+              <span class="text-xs text-muted">Updated today</span>
+              <a href="jobs.html" class="btn btn--secondary btn--sm">Explore Jobs</a>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

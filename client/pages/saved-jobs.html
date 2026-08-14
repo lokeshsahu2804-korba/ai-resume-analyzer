@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Saved Jobs — Access and manage your bookmarked job listings.">
+  <title>Saved Jobs — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/jobs.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Jobs /</span>
+          <span class="text-sm font-semibold text-primary">Saved Bookmarks</span>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        <div class="mb-2xl">
+          <h1 class="text-3xl font-bold mb-xs">Saved Jobs</h1>
+          <p class="text-secondary">Track job postings you have bookmarked for later application.</p>
+        </div>
+
+        <div class="d-grid grid-cols-2 gap-xl">
+          
+          <div class="job-card">
+            <div>
+              <div class="job-card__header mb-md">
+                <div class="d-flex items-center gap-md">
+                  <div class="job-card__company-logo">ST</div>
+                  <div>
+                    <h2 class="text-lg font-bold text-primary">Lead Full Stack Engineer</h2>
+                    <div class="text-xs text-muted">Stripe • Remote (India)</div>
+                  </div>
+                </div>
+                <span class="badge badge--match font-bold">94% Match</span>
+              </div>
+
+              <div class="p-sm mb-md" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed var(--color-border);">
+                <div class="text-xs text-muted font-semibold mb-2xs">Your Personal Note:</div>
+                <div class="text-xs text-secondary">"Referral contact: Priya from Bengaluru office. Re-align resume bullet points before applying."</div>
+              </div>
+            </div>
+
+            <div class="card__footer pt-md">
+              <span class="font-mono text-xs font-bold text-success">₹35L – ₹45L</span>
+              <div class="d-flex gap-xs">
+                <button class="btn btn--outline btn--sm text-danger" onclick="showToast('Removed from saved bookmarks', 'info')"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
+                <a href="job-details.html" class="btn btn--primary btn--sm">View Details</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-card">
+            <div>
+              <div class="job-card__header mb-md">
+                <div class="d-flex items-center gap-md">
+                  <div class="job-card__company-logo" style="color:#10b981;">RZ</div>
+                  <div>
+                    <h2 class="text-lg font-bold text-primary">Senior Node.js Backend Architect</h2>
+                    <div class="text-xs text-muted">Razorpay • Bengaluru (Hybrid)</div>
+                  </div>
+                </div>
+                <span class="badge badge--match font-bold">91% Match</span>
+              </div>
+
+              <div class="p-sm mb-md" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed var(--color-border);">
+                <div class="text-xs text-muted font-semibold mb-2xs">Your Personal Note:</div>
+                <div class="text-xs text-secondary">"Matches backend architecture stack closely. Need to highlight MongoDB scaling in resume."</div>
+              </div>
+            </div>
+
+            <div class="card__footer pt-md">
+              <span class="font-mono text-xs font-bold text-success">₹30L – ₹40L</span>
+              <div class="d-flex gap-xs">
+                <button class="btn btn--outline btn--sm text-danger" onclick="showToast('Removed from saved bookmarks', 'info')"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
+                <a href="job-details.html" class="btn btn--primary btn--sm">View Details</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

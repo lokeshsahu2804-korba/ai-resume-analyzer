@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Account Settings — Manage security, passwords, and subscription preferences.">
+  <title>Account Settings — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Account /</span>
+          <span class="text-sm font-semibold text-primary">Settings</span>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        <div class="container--narrow">
+          <div class="mb-2xl">
+            <h1 class="text-3xl font-bold mb-xs">Account Settings</h1>
+            <p class="text-secondary">Manage your password, subscription tier, and platform preferences.</p>
+          </div>
+
+          <!-- Subscription Overview Card -->
+          <div class="card p-2xl mb-2xl">
+            <div class="d-flex justify-between items-center mb-md">
+              <div>
+                <h3 class="text-lg font-bold">Subscription Plan</h3>
+                <p class="text-xs text-muted">Currently active tier</p>
+              </div>
+              <span class="badge badge--primary">Free Plan</span>
+            </div>
+
+            <div class="p-md mb-lg" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+              <div class="d-flex justify-between text-xs mb-xs">
+                <span>Monthly AI Resume Analyses Remaining</span>
+                <span class="font-mono font-bold text-accent">2 of 3 remaining</span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar__fill" style="width: 33%;"></div></div>
+            </div>
+
+            <div class="d-flex justify-between items-center">
+              <span class="text-xs text-muted">Next quota reset: Sep 1, 2026</span>
+              <a href="pricing.html" class="btn btn--gradient btn--sm">
+                <i data-lucide="sparkles"></i> Upgrade to Pro (₹499)
+              </a>
+            </div>
+          </div>
+
+          <!-- Password Security Card -->
+          <div class="card p-2xl mb-2xl">
+            <h3 class="text-lg font-bold mb-md">Change Password</h3>
+            
+            <form id="password-form">
+              <div class="form-group">
+                <label class="form-label" for="current-password">Current Password</label>
+                <input type="password" id="current-password" class="form-input" placeholder="••••••••">
+              </div>
+
+              <div class="d-grid grid-cols-2 gap-md">
+                <div class="form-group">
+                  <label class="form-label" for="new-password">New Password</label>
+                  <input type="password" id="new-password" class="form-input" placeholder="Minimum 8 characters">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="confirm-new-password">Confirm New Password</label>
+                  <input type="password" id="confirm-new-password" class="form-input" placeholder="Repeat new password">
+                </div>
+              </div>
+
+              <div class="d-flex justify-end">
+                <button type="button" class="btn btn--secondary" onclick="showToast('Password updated successfully!', 'success')">
+                  Update Password
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Danger Zone Card -->
+          <div class="card p-2xl" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.03);">
+            <h3 class="text-lg font-bold text-danger mb-xs">Danger Zone</h3>
+            <p class="text-xs text-secondary mb-lg">Permanently delete your account and all associated resume analysis records.</p>
+            
+            <button class="btn btn--danger btn--sm" onclick="showToast('Delete account modal will be confirmed in Phase 5', 'warning')">
+              Delete My Account
+            </button>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

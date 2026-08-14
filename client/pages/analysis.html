@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detailed Resume ATS Score analysis, category breakdown, improvement suggestions, and skill gap insights.">
+  <title>Resume Analysis Report — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/analysis.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Analysis /</span>
+          <span class="text-sm font-semibold text-primary">Senior_FullStack_Resume.pdf</span>
+        </div>
+        <div class="d-flex items-center gap-md">
+          <a href="jobs.html" class="btn btn--gradient btn--sm">
+            <i data-lucide="briefcase"></i> View 12 Matched Jobs
+          </a>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        
+        <!-- Score Overview Hero Card -->
+        <div class="score-overview-card mb-2xl">
+          <div class="ats-gauge" style="width: 140px; height: 140px; flex-shrink: 0;">
+            <svg viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="#06b6d4" />
+                </linearGradient>
+              </defs>
+              <circle class="ats-gauge__circle-bg" cx="60" cy="60" r="50" />
+              <circle class="ats-gauge__circle-fill" cx="60" cy="60" r="50" stroke-dasharray="314.15" stroke-dashoffset="37.69" />
+            </svg>
+            <div class="ats-gauge__content">
+              <div class="ats-gauge__score">88</div>
+              <div class="ats-gauge__label">ATS Score</div>
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <div class="d-flex items-center gap-md mb-xs">
+              <h1 class="text-2xl font-bold">Strong ATS Compatibility</h1>
+              <span class="badge badge--success">Ready to Apply</span>
+            </div>
+            <p class="text-secondary text-sm mb-lg">
+              Your resume demonstrates strong technical depth, clear section hierarchy, and quantifiable impact metrics. Addressing the 3 high-priority recommendations below can boost your score to <strong>94+</strong>.
+            </p>
+            <div class="d-flex items-center gap-xl text-xs text-muted">
+              <span><strong>File:</strong> Senior_FullStack_Engineer_2026.pdf</span>
+              <span><strong>Analyzed:</strong> Today at 10:45 AM</span>
+              <span><strong>Experience Level:</strong> Senior (5+ years)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Score Breakdown (7 Categories Grid) -->
+        <h2 class="text-xl font-bold mb-lg">ATS Score Category Breakdown</h2>
+        <div class="d-grid grid-cols-3 gap-xl mb-3xl">
+          
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Skills Relevance</span>
+              <span class="font-mono font-bold text-success">18 / 20</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
+            <p class="text-xs text-muted">Strong keyword density for Node.js, React, and MongoDB.</p>
+          </div>
+
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Experience Quality</span>
+              <span class="font-mono font-bold text-success">17 / 20</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 85%;"></div></div>
+            <p class="text-xs text-muted">High-impact responsibility descriptions with clear ownership.</p>
+          </div>
+
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Structure &amp; Formatting</span>
+              <span class="font-mono font-bold text-success">14 / 15</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 93%;"></div></div>
+            <p class="text-xs text-muted">Standard headings detected; zero ATS parsing blockers.</p>
+          </div>
+
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Keyword Alignment</span>
+              <span class="font-mono font-bold text-success">13 / 15</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 86%;"></div></div>
+            <p class="text-xs text-muted">Core industry standard terminology is properly integrated.</p>
+          </div>
+
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Quantifiable Metrics</span>
+              <span class="font-mono font-bold text-success">9 / 10</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
+            <p class="text-xs text-muted">Frequent use of percentages, dollar amounts, and user counts.</p>
+          </div>
+
+          <div class="category-score-card">
+            <div class="d-flex justify-between items-center">
+              <span class="text-sm font-semibold">Section Completeness</span>
+              <span class="font-mono font-bold text-success">10 / 10</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" style="width: 100%;"></div></div>
+            <p class="text-xs text-muted">All 5 critical resume sections are present and populated.</p>
+          </div>
+
+        </div>
+
+        <!-- Actionable Suggestions Section -->
+        <div class="d-flex justify-between items-center mb-lg">
+          <h2 class="text-xl font-bold">Actionable Bullet Point Improvements</h2>
+          <span class="badge badge--warning">3 High Priority Recommendations</span>
+        </div>
+
+        <div class="d-flex flex-col gap-lg mb-3xl">
+          <div class="suggestion-card suggestion-card--high">
+            <div class="d-flex justify-between items-center">
+              <span class="badge badge--danger">High Priority • Experience</span>
+              <span class="text-xs text-muted">Impact Score: +3 pts</span>
+            </div>
+            <h3 class="text-base font-semibold">Strengthen backend API bullet points with scale metrics</h3>
+            <p class="text-sm text-secondary">Your current experience mentions building backend endpoints, but does not state request volume or latency reductions.</p>
+            <div class="suggestion-card__example">
+              <span class="text-danger">&minus; "Built REST APIs in Node.js for customer dashboard."</span><br>
+              <span class="text-success">&plus; "Architected high-throughput Node.js REST APIs serving 2M+ daily requests, reducing response latency by 35%."</span>
+            </div>
+          </div>
+
+          <div class="suggestion-card suggestion-card--high">
+            <div class="d-flex justify-between items-center">
+              <span class="badge badge--danger">High Priority • Keywords</span>
+              <span class="text-xs text-muted">Impact Score: +2 pts</span>
+            </div>
+            <h3 class="text-base font-semibold">Integrate missing cloud infrastructure keywords</h3>
+            <p class="text-sm text-secondary">Senior full-stack roles in 2026 frequently require CI/CD and containerization keywords.</p>
+            <div class="suggestion-card__example">
+              <span class="text-accent">&plus; Add: <code>Docker</code>, <code>CI/CD Pipelines</code>, <code>AWS S3/EC2</code>, <code>Redis Caching</code></span>
+            </div>
+          </div>
+
+          <div class="suggestion-card suggestion-card--medium">
+            <div class="d-flex justify-between items-center">
+              <span class="badge badge--warning">Medium Priority • Formatting</span>
+              <span class="text-xs text-muted">Impact Score: +1 pt</span>
+            </div>
+            <h3 class="text-base font-semibold">Standardize date ranges in work experience</h3>
+            <p class="text-sm text-secondary">Use consistent formats (e.g. "Aug 2023 – Present" rather than mixing "08/23" with "Present").</p>
+          </div>
+        </div>
+
+        <!-- Skills Matrix -->
+        <h2 class="text-xl font-bold mb-lg">Extracted Skills Matrix</h2>
+        <div class="card p-xl mb-3xl">
+          <div class="d-flex flex-col gap-lg">
+            <div>
+              <div class="text-xs font-bold text-muted text-uppercase mb-xs">Detected Technical Skills</div>
+              <div class="d-flex flex-wrap gap-xs">
+                <span class="skill-chip skill-chip--matched">JavaScript</span>
+                <span class="skill-chip skill-chip--matched">TypeScript</span>
+                <span class="skill-chip skill-chip--matched">Node.js</span>
+                <span class="skill-chip skill-chip--matched">Express</span>
+                <span class="skill-chip skill-chip--matched">React</span>
+                <span class="skill-chip skill-chip--matched">MongoDB</span>
+                <span class="skill-chip skill-chip--matched">FastAPI</span>
+                <span class="skill-chip skill-chip--matched">Python</span>
+                <span class="skill-chip skill-chip--matched">REST APIs</span>
+                <span class="skill-chip skill-chip--matched">Git</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs font-bold text-muted text-uppercase mb-xs">Missing Recommended Keywords for Senior Level</div>
+              <div class="d-flex flex-wrap gap-xs">
+                <span class="skill-chip skill-chip--missing">+ Docker</span>
+                <span class="skill-chip skill-chip--missing">+ Kubernetes</span>
+                <span class="skill-chip skill-chip--missing">+ AWS Cloud</span>
+                <span class="skill-chip skill-chip--missing">+ Microservices</span>
+                <span class="skill-chip skill-chip--missing">+ Redis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Job Application Tracker — Manage your career pipeline across interview stages.">
+  <title>Application Tracker — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/jobs.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Jobs /</span>
+          <span class="text-sm font-semibold text-primary">Application Pipeline Tracker</span>
+        </div>
+        <div class="d-flex items-center gap-md">
+          <button class="btn btn--gradient btn--sm" onclick="showToast('Application record created!', 'success')">
+            <i data-lucide="plus"></i> Add Application
+          </button>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        <div class="mb-2xl">
+          <h1 class="text-3xl font-bold mb-xs">Job Application Pipeline</h1>
+          <p class="text-secondary">Track the real-time status of your job submissions from initial apply to final offer.</p>
+        </div>
+
+        <!-- 4 Column Kanban Board -->
+        <div class="kanban-board">
+          
+          <!-- Column 1: Applied -->
+          <div class="kanban-col">
+            <div class="kanban-col__header">
+              <span class="kanban-col__title"><i data-lucide="send" style="color:var(--color-info); width:16px; height:16px;"></i> Applied</span>
+              <span class="badge badge--info">2</span>
+            </div>
+
+            <div class="kanban-item">
+              <div class="kanban-item__company">Google</div>
+              <div class="kanban-item__title">Senior Software Engineer</div>
+              <div class="d-flex justify-between items-center mt-xs">
+                <span class="badge badge--primary">₹45L</span>
+                <span class="kanban-item__date"><i data-lucide="clock" style="width:12px; height:12px;"></i> Applied Aug 12</span>
+              </div>
+            </div>
+
+            <div class="kanban-item">
+              <div class="kanban-item__company">Swiggy</div>
+              <div class="kanban-item__title">Full Stack Engineer (L4)</div>
+              <div class="d-flex justify-between items-center mt-xs">
+                <span class="badge badge--primary">₹32L</span>
+                <span class="kanban-item__date"><i data-lucide="clock" style="width:12px; height:12px;"></i> Applied Aug 10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Interviewing -->
+          <div class="kanban-col">
+            <div class="kanban-col__header">
+              <span class="kanban-col__title"><i data-lucide="calendar" style="color:var(--color-warning); width:16px; height:16px;"></i> Interviewing</span>
+              <span class="badge badge--warning">1</span>
+            </div>
+
+            <div class="kanban-item" style="border-left: 3px solid var(--color-warning);">
+              <div class="kanban-item__company">Stripe</div>
+              <div class="kanban-item__title">Lead Full Stack Engineer</div>
+              <div class="text-2xs text-warning font-semibold mt-2xs">System Design Round: Aug 18</div>
+              <div class="d-flex justify-between items-center mt-xs">
+                <span class="badge badge--match">94% Match</span>
+                <span class="kanban-item__date"><i data-lucide="clock" style="width:12px; height:12px;"></i> Updated 1d ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Offered -->
+          <div class="kanban-col">
+            <div class="kanban-col__header">
+              <span class="kanban-col__title"><i data-lucide="award" style="color:var(--color-success); width:16px; height:16px;"></i> Offer Received</span>
+              <span class="badge badge--success">1</span>
+            </div>
+
+            <div class="kanban-item" style="border-left: 3px solid var(--color-success);">
+              <div class="kanban-item__company">Razorpay</div>
+              <div class="kanban-item__title">Senior Backend Engineer</div>
+              <div class="text-2xs text-success font-semibold mt-2xs">Official Offer Letter Received</div>
+              <div class="d-flex justify-between items-center mt-xs">
+                <span class="badge badge--success font-bold font-mono">₹38L / yr</span>
+                <span class="kanban-item__date"><i data-lucide="clock" style="width:12px; height:12px;"></i> Yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 4: Rejected / Closed -->
+          <div class="kanban-col">
+            <div class="kanban-col__header">
+              <span class="kanban-col__title"><i data-lucide="x-circle" style="color:var(--color-muted); width:16px; height:16px;"></i> Closed</span>
+              <span class="badge badge--secondary">0</span>
+            </div>
+            <div class="text-xs text-muted text-center py-xl">
+              No rejected applications.
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

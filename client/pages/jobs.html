@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-matched Job Recommendations based on your parsed resume skills and experience level.">
+  <title>Matched Jobs — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/jobs.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Jobs /</span>
+          <span class="text-sm font-semibold text-primary">Matched Job Listings</span>
+        </div>
+        <div class="d-flex items-center gap-md">
+          <a href="applications.html" class="btn btn--outline btn--sm">
+            <i data-lucide="list-todo"></i> Application Tracker (4)
+          </a>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        
+        <!-- Header & Search Toolbar -->
+        <div class="mb-2xl">
+          <h1 class="text-3xl font-bold mb-xs">AI Matched Job Recommendations</h1>
+          <p class="text-secondary">Sorted by compatibility with your active resume: <strong>Senior_FullStack_Engineer_2026.pdf</strong></p>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="card p-lg mb-2xl">
+          <div class="d-grid grid-cols-4 gap-md items-center">
+            <div class="form-group mb-none">
+              <input type="text" class="form-input" placeholder="Search role or keyword...">
+            </div>
+            <div class="form-group mb-none">
+              <select class="form-select">
+                <option value="">All Experience Levels</option>
+                <option value="senior" selected>Senior Level (5+ yrs)</option>
+                <option value="mid">Mid Level (2-4 yrs)</option>
+              </select>
+            </div>
+            <div class="form-group mb-none">
+              <select class="form-select">
+                <option value="">All Job Types</option>
+                <option value="remote" selected>Remote (India)</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+            <div class="d-flex gap-sm">
+              <button class="btn btn--primary w-full"><i data-lucide="filter"></i> Filter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job Cards Grid -->
+        <div class="d-grid grid-cols-2 gap-xl mb-3xl">
+          
+          <!-- Job Card 1 -->
+          <div class="job-card">
+            <div>
+              <div class="job-card__header mb-md">
+                <div class="d-flex items-center gap-md">
+                  <div class="job-card__company-logo">ST</div>
+                  <div>
+                    <h2 class="text-lg font-bold text-primary">Lead Full Stack Engineer</h2>
+                    <div class="text-xs text-muted">Stripe • Remote (India)</div>
+                  </div>
+                </div>
+                <span class="badge badge--match font-bold">94% Match</span>
+              </div>
+
+              <p class="text-xs text-secondary mb-md">
+                Design and scale developer-facing payment APIs and high-availability dashboards with modern TypeScript, Node.js, and React.
+              </p>
+
+              <div class="d-flex flex-wrap gap-xs mb-md">
+                <span class="skill-chip skill-chip--matched">TypeScript</span>
+                <span class="skill-chip skill-chip--matched">Node.js</span>
+                <span class="skill-chip skill-chip--matched">React</span>
+                <span class="skill-chip skill-chip--matched">REST APIs</span>
+                <span class="skill-chip skill-chip--missing">+ AWS</span>
+              </div>
+            </div>
+
+            <div class="card__footer pt-md">
+              <span class="font-mono text-xs font-bold text-success">₹35,00,000 – ₹45,00,000 / yr</span>
+              <div class="d-flex gap-xs">
+                <a href="job-details.html" class="btn btn--primary btn--sm">View Details</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Job Card 2 -->
+          <div class="job-card">
+            <div>
+              <div class="job-card__header mb-md">
+                <div class="d-flex items-center gap-md">
+                  <div class="job-card__company-logo" style="color:#10b981;">RZ</div>
+                  <div>
+                    <h2 class="text-lg font-bold text-primary">Senior Node.js Backend Architect</h2>
+                    <div class="text-xs text-muted">Razorpay • Bengaluru (Hybrid)</div>
+                  </div>
+                </div>
+                <span class="badge badge--match font-bold">91% Match</span>
+              </div>
+
+              <p class="text-xs text-secondary mb-md">
+                Architect high-volume financial transaction gateways, optimize MongoDB collections, and implement low-latency caching layers.
+              </p>
+
+              <div class="d-flex flex-wrap gap-xs mb-md">
+                <span class="skill-chip skill-chip--matched">Node.js</span>
+                <span class="skill-chip skill-chip--matched">Express</span>
+                <span class="skill-chip skill-chip--matched">MongoDB</span>
+                <span class="skill-chip skill-chip--matched">System Design</span>
+                <span class="skill-chip skill-chip--missing">+ Redis</span>
+              </div>
+            </div>
+
+            <div class="card__footer pt-md">
+              <span class="font-mono text-xs font-bold text-success">₹30,00,000 – ₹40,00,000 / yr</span>
+              <div class="d-flex gap-xs">
+                <a href="job-details.html" class="btn btn--primary btn--sm">View Details</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/utils/constants.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

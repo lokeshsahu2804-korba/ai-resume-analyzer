@@ -1,0 +1,93 @@
+/* ==========================================================================
+   AI Resume Analyzer - Dashboard Stylesheet (dashboard.css)
+   ========================================================================== */
+
+/* Dashboard Header Greeting */
+.dashboard-hero {
+  background: var(--gradient-card-glow);
+  border: 1px solid var(--color-border-glow);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-hero__text h1 {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-xs);
+}
+
+/* Stat Cards Grid */
+.stat-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  transition: all var(--transition-base);
+}
+
+.stat-card:hover {
+  border-color: var(--color-border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card__value {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin: var(--space-xs) 0;
+}
+
+.stat-card__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.stat-card__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card__icon--primary { background: rgba(99, 102, 241, 0.15); color: var(--color-primary-light); }
+.stat-card__icon--success { background: rgba(16, 185, 129, 0.15); color: var(--color-success); }
+.stat-card__icon--warning { background: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
+.stat-card__icon--cyan { background: rgba(6, 182, 212, 0.15); color: var(--color-accent-cyan); }
+
+/* Quick Action Cards */
+.action-card {
+  border: 1px dashed var(--color-border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.01);
+  transition: all var(--transition-base);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.action-card:hover {
+  background: rgba(99, 102, 241, 0.05);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
