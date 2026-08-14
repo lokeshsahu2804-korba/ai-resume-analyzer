@@ -1,9 +1,11 @@
 /**
  * User Mongoose Model (models/User.js)
  * Stores user account credentials, profile details, usage quotas, and subscription tier.
+ * Implements bcrypt password hashing and comparison methods.
  */
 
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const profileSchema = new mongoose.Schema(
   {
@@ -91,6 +93,37 @@ const userSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+// ---------------------------------------------------------------------------
+// Hooks & Instance Methods
+// ---------------------------------------------------------------------------
+
+// Pre-save hook: Hash password with 12 salt rounds before saving
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Instance method: Verify candidate password against hashed password
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Transform toJSON: Never leak password or __v in API responses
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  }
+});
 
 const User = mongoose.model('User', userSchema);
 
