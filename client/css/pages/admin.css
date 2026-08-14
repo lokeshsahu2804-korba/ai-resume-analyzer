@@ -1,0 +1,49 @@
+/* ==========================================================================
+   AI Resume Analyzer - Admin Stylesheet (admin.css)
+   ========================================================================== */
+
+/* Admin KPI Grid */
+.admin-metric-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md);
+  transition: all var(--transition-base);
+}
+
+.admin-metric-card:hover {
+  border-color: var(--color-primary-light);
+  transform: translateY(-2px);
+}
+
+.admin-metric__value {
+  font-family: var(--font-mono);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.admin-metric__change {
+  font-size: var(--font-size-2xs);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-weight: 600;
+}
+
+/* User & Job Status Indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot--active { background-color: var(--color-success); box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+.status-dot--inactive { background-color: var(--color-danger); }
+.status-dot--pending { background-color: var(--color-warning); }

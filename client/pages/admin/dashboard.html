@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ResumeAI Platform Admin Dashboard — Overview of users, resume parsings, and revenue.">
+  <title>Admin Dashboard — ResumeAI</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="../../css/base.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/utilities.css">
+  <link rel="stylesheet" href="../../css/pages/admin.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Mount (Admin Mode) -->
+    <div id="sidebar-mount"></div>
+
+    <div class="app-layout__main">
+      <header class="app-layout__topbar">
+        <div class="d-flex items-center gap-md">
+          <span class="text-sm text-secondary">Admin Portal /</span>
+          <span class="text-sm font-semibold text-primary">System Analytics Overview</span>
+        </div>
+        <div class="d-flex items-center gap-md">
+          <span class="badge badge--danger"><i data-lucide="shield-alert" style="width:12px; height:12px;"></i> Admin Mode</span>
+          <a href="../dashboard.html" class="btn btn--outline btn--sm">Exit to User App</a>
+        </div>
+      </header>
+
+      <main class="app-layout__content">
+        <div class="mb-2xl">
+          <h1 class="text-3xl font-bold mb-xs">Platform Administration</h1>
+          <p class="text-secondary">Real-time metrics, system health, and user management controls.</p>
+        </div>
+
+        <!-- 4 KPI Cards Grid -->
+        <div class="d-grid grid-cols-4 gap-xl mb-3xl">
+          <div class="admin-metric-card">
+            <div class="d-flex justify-between items-center text-xs text-muted">
+              <span>Total Registered Users</span>
+              <i data-lucide="users" style="color:var(--color-primary-light);"></i>
+            </div>
+            <div class="admin-metric__value">1,482</div>
+            <div class="admin-metric__change text-success">
+              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> +18% this month
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="d-flex justify-between items-center text-xs text-muted">
+              <span>Resumes Analyzed</span>
+              <i data-lucide="file-check-2" style="color:var(--color-success);"></i>
+            </div>
+            <div class="admin-metric__value">4,891</div>
+            <div class="admin-metric__change text-success">
+              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> +24% this month
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="d-flex justify-between items-center text-xs text-muted">
+              <span>Premium Subscribers</span>
+              <i data-lucide="sparkles" style="color:var(--color-warning);"></i>
+            </div>
+            <div class="admin-metric__value">312</div>
+            <div class="admin-metric__change text-success">
+              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> 21.0% conversion
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="d-flex justify-between items-center text-xs text-muted">
+              <span>Test Revenue (Razorpay)</span>
+              <i data-lucide="indian-rupee" style="color:var(--color-accent-emerald);"></i>
+            </div>
+            <div class="admin-metric__value">₹1.55L</div>
+            <div class="admin-metric__change text-muted">
+              Sandbox Test Mode
+            </div>
+          </div>
+        </div>
+
+        <!-- System Status & Recent Activity Grid -->
+        <div class="d-grid grid-cols-3 gap-2xl">
+          
+          <!-- System Status Card -->
+          <div class="card p-xl">
+            <h3 class="text-base font-bold mb-lg">Platform Microservices Health</h3>
+            <div class="d-flex flex-col gap-md">
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div class="d-flex items-center gap-sm">
+                  <span class="status-dot status-dot--active"></span>
+                  <span class="text-sm font-semibold">Express Primary API</span>
+                </div>
+                <span class="badge badge--success">Port 5001 • Healthy</span>
+              </div>
+
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div class="d-flex items-center gap-sm">
+                  <span class="status-dot status-dot--active"></span>
+                  <span class="text-sm font-semibold">FastAPI Python Sidecar</span>
+                </div>
+                <span class="badge badge--success">Port 8000 • Healthy</span>
+              </div>
+
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
+                <div class="d-flex items-center gap-sm">
+                  <span class="status-dot status-dot--active"></span>
+                  <span class="text-sm font-semibold">Gemini AI Model</span>
+                </div>
+                <span class="badge badge--primary">Selected in Phase 9</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Analyses Feed -->
+          <div class="card p-xl" style="grid-column: span 2;">
+            <div class="card__header">
+              <h3 class="text-base font-bold">Recent System Activity</h3>
+              <span class="badge badge--primary">Live Feed</span>
+            </div>
+
+            <div class="d-flex flex-col gap-sm">
+              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
+                <div class="d-flex items-center gap-sm text-xs">
+                  <i data-lucide="file-text" style="color:var(--color-primary-light); width:14px; height:14px;"></i>
+                  <span>Resume analysis completed for <strong>priya.dev@example.com</strong></span>
+                </div>
+                <span class="badge badge--success font-mono">92/100</span>
+              </div>
+
+              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
+                <div class="d-flex items-center gap-sm text-xs">
+                  <i data-lucide="user-plus" style="color:var(--color-success); width:14px; height:14px;"></i>
+                  <span>New user registered: <strong>rahul.sharma@example.com</strong></span>
+                </div>
+                <span class="text-xs text-muted">2 mins ago</span>
+              </div>
+
+              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
+                <div class="d-flex items-center gap-sm text-xs">
+                  <i data-lucide="sparkles" style="color:var(--color-warning); width:14px; height:14px;"></i>
+                  <span>User upgraded to Premium Plan: <strong>amit.kumar@example.com</strong></span>
+                </div>
+                <span class="badge badge--gradient">₹499 Paid</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/utils/constants.js"></script>
+  <script type="module" src="../../js/app.js"></script>
+</body>
+</html>
