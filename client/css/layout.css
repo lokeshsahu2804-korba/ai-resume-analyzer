@@ -1,0 +1,419 @@
+/* ==========================================================================
+   AI Resume Analyzer - Layout Stylesheet (layout.css)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Container & Wrappers
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+.container--fluid {
+  max-width: 100%;
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+.container--narrow {
+  max-width: 800px;
+}
+
+/* ==========================================================================
+   2. Global Top Navbar
+   ========================================================================== */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-height);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.navbar__logo-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.navbar__brand-text {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  list-style: none;
+}
+
+.navbar__link {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.navbar__link:hover,
+.navbar__link.active {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.navbar__link.active {
+  color: var(--color-primary-light);
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.navbar__toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   3. Dashboard Shell Layout (Sidebar + Content)
+   ========================================================================== */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+}
+
+.app-layout__sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  transition: transform var(--transition-base);
+}
+
+.app-layout__main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left var(--transition-base);
+}
+
+.app-layout__topbar {
+  height: var(--header-height);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-2xl);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.app-layout__content {
+  flex: 1;
+  padding: var(--space-2xl);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Sidebar Components */
+.sidebar__header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-xl);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar__nav {
+  flex: 1;
+  padding: var(--space-lg) var(--space-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.sidebar__section-title {
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  padding: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.sidebar__link i,
+.sidebar__link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.sidebar__link:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar__link:hover i,
+.sidebar__link:hover svg {
+  color: var(--color-primary-light);
+}
+
+.sidebar__link.active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-left: 3px solid var(--color-primary);
+  font-weight: 600;
+}
+
+.sidebar__link.active i,
+.sidebar__link.active svg {
+  color: var(--color-primary-light);
+}
+
+.sidebar__badge {
+  margin-left: auto;
+  font-size: var(--font-size-2xs);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.sidebar__footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.sidebar__user-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar__avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  font-size: var(--font-size-xs);
+}
+
+.sidebar__user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar__user-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.sidebar__user-plan {
+  font-size: var(--font-size-2xs);
+  color: var(--color-accent-emerald);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   4. Footer Layout
+   ========================================================================== */
+
+.footer {
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-3xl) 0 var(--space-xl);
+  margin-top: auto;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: var(--space-3xl);
+  margin-bottom: var(--space-3xl);
+}
+
+.footer__brand-p {
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);
+  max-width: 320px;
+}
+
+.footer__col-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-lg);
+}
+
+.footer__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer__link {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.footer__link:hover {
+  color: var(--color-text-primary);
+}
+
+.footer__bottom {
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   5. Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .app-layout__sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .app-layout__sidebar.open {
+    transform: translateX(0);
+  }
+
+  .app-layout__main {
+    margin-left: 0;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar__links {
+    display: none;
+  }
+
+  .navbar__toggle {
+    display: flex;
+  }
+
+  .app-layout__topbar {
+    padding: 0 var(--space-md);
+  }
+
+  .app-layout__content {
+    padding: var(--space-md);
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    gap: var(--space-md);
+    text-align: center;
+  }
+}

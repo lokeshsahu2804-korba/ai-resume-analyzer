@@ -1,0 +1,132 @@
+/* ==========================================================================
+   AI Resume Analyzer - Utilities Stylesheet (utilities.css)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Display & Flexbox
+   ========================================================================== */
+
+.d-flex { display: flex; }
+.d-inline-flex { display: inline-flex; }
+.d-block { display: block; }
+.d-inline-block { display: inline-block; }
+.d-grid { display: grid; }
+.d-none { display: none !important; }
+
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; }
+.flex-auto { flex: 1 1 auto; }
+.flex-none { flex: none; }
+
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-baseline { align-items: baseline; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+/* ==========================================================================
+   2. Grid Layout Helpers
+   ========================================================================== */
+
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 1024px) {
+  .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-4,
+  .grid-cols-3,
+  .grid-cols-2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+}
+
+/* ==========================================================================
+   3. Spacing Gaps
+   ========================================================================== */
+
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.gap-base { gap: var(--space-base); }
+.gap-lg { gap: var(--space-lg); }
+.gap-xl { gap: var(--space-xl); }
+.gap-2xl { gap: var(--space-2xl); }
+
+/* Margin Helpers */
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+.mt-2xl { margin-top: var(--space-2xl); }
+
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+.mb-2xl { margin-bottom: var(--space-2xl); }
+
+/* ==========================================================================
+   4. Text & Typography Utilities
+   ========================================================================== */
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-accent { color: var(--color-primary-light); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-danger { color: var(--color-danger); }
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.font-mono { font-family: var(--font-mono); }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+
+/* ==========================================================================
+   5. Sizing & Positioning
+   ========================================================================== */
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.overflow-hidden { overflow: hidden; }
+.cursor-pointer { cursor: pointer; }
