@@ -15,6 +15,9 @@
 
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Razorpay Checkout Script (Test & Live Mode) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -79,13 +82,13 @@
         <div>
           <div class="d-flex justify-between items-center mb-md">
             <h2 class="text-2xl font-bold">Premium Pro</h2>
-            <span class="badge badge--gradient">Most Popular</span>
+            <span class="badge badge--gradient" id="user-current-plan-badge">Most Popular</span>
           </div>
           <p class="text-sm text-secondary mb-xl">Full access to advanced AI resume coaching, bullet point rewriters & smart matching.</p>
           
           <div class="mb-2xl">
             <span class="text-4xl font-extrabold font-mono text-gradient">₹499</span>
-            <span class="text-sm text-muted">/ month (test mode)</span>
+            <span class="text-sm text-muted">/ 30-day access pass</span>
           </div>
 
           <ul class="d-flex flex-col gap-md mb-2xl" style="list-style:none;">
@@ -112,11 +115,36 @@
           </ul>
         </div>
 
-        <button class="btn btn--gradient btn--lg w-full text-center" onclick="showToast('Razorpay Payment modal will activate in Phase 15!', 'info', 'Payment Preview')">
-          <i data-lucide="sparkles"></i> Upgrade to Premium (₹499)
-        </button>
+        <div id="premium-cta-container">
+          <button class="btn btn--gradient btn--lg w-full text-center" id="btn-upgrade-premium">
+            <i data-lucide="sparkles"></i> Upgrade to Premium (₹499)
+          </button>
+        </div>
       </div>
 
+    </div>
+
+    <!-- Candidate Payment History Section -->
+    <div class="card p-2xl mb-4xl d-none" id="payment-history-section" style="max-width: 960px; margin-left: auto; margin-right: auto;">
+      <div class="d-flex justify-between items-center mb-lg">
+        <h2 class="text-xl font-bold">Billing & Transaction History</h2>
+        <span class="badge badge--secondary text-xs">Test Mode</span>
+      </div>
+      <div class="table-container">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Transaction ID</th>
+            </tr>
+          </thead>
+          <tbody id="payment-history-list">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- FAQ Accordion Container -->
@@ -128,8 +156,8 @@
           <p class="text-sm text-secondary">We use a dual-engine architecture: objective formatting, contact details, and keyword metrics are scored deterministically, while experience quality and semantic fit are assessed with contextual AI.</p>
         </div>
         <div class="p-md" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-          <h3 class="text-base font-semibold mb-xs">Can I cancel my premium subscription anytime?</h3>
-          <p class="text-sm text-secondary">Yes. In our MVP, payments are 30-day one-time access passes. There are no recurring surprise charges.</p>
+          <h3 class="text-base font-semibold mb-xs">How long does Premium access last?</h3>
+          <p class="text-sm text-secondary">Premium Pro access lasts for 30 consecutive days from the date of payment confirmation, unlocking unlimited resume analyses and AI job matches.</p>
         </div>
       </div>
     </div>
@@ -143,5 +171,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/pricing.js"></script>
 </body>
 </html>
