@@ -1,6 +1,6 @@
 /**
  * Resume Analysis History Page Controller (pages/history.js)
- * Fetches user's uploaded resumes, displays parsing status, and allows manual parse trigger & delete.
+ * Fetches user's uploaded resumes, displays parsing/analysis status, and allows manual parse trigger & AI evaluation.
  */
 
 import { authService } from '../services/auth.service.js';
@@ -49,19 +49,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const status = r.status || 'uploaded';
             let statusBadge = '';
-            let parseActionBtn = '';
+            let actionBtn = '';
 
-            if (status === 'parsed') {
+            if (status === 'analyzed') {
+              statusBadge = `<span class="badge badge--success font-mono font-bold"><i data-lucide="award" style="width:12px;height:12px;"></i> ANALYZED</span>`;
+              actionBtn = `<a href="analysis.html?resumeId=${r._id}" class="btn btn--gradient btn--sm mr-xs"><i data-lucide="bar-chart-3" style="width:12px;height:12px;"></i> View Report</a>`;
+            } else if (status === 'parsed') {
               const skillsCount = r.parsed?.skills?.length || 0;
-              statusBadge = `<span class="badge badge--success font-mono font-bold"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> PARSED (${skillsCount} skills)</span>`;
-            } else if (status === 'processing') {
-              statusBadge = `<span class="badge badge--warning font-mono font-bold"><span class="spinner spinner--sm" style="width:12px;height:12px;"></span> PROCESSING</span>`;
+              statusBadge = `<span class="badge badge--primary font-mono font-bold"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> PARSED (${skillsCount} skills)</span>`;
+              actionBtn = `<a href="analysis.html?resumeId=${r._id}&trigger=true" class="btn btn--gradient btn--sm mr-xs"><i data-lucide="zap" style="width:12px;height:12px;"></i> Analyze</a>`;
+            } else if (status === 'processing' || status === 'analyzing') {
+              statusBadge = `<span class="badge badge--warning font-mono font-bold"><span class="spinner spinner--sm" style="width:12px;height:12px;"></span> ${status.toUpperCase()}</span>`;
             } else if (status === 'failed') {
               statusBadge = `<span class="badge badge--danger font-mono font-bold">PARSE FAILED</span>`;
-              parseActionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Retry Parse</button>`;
+              actionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Retry Parse</button>`;
             } else {
               statusBadge = `<span class="badge badge--secondary font-mono font-bold">UPLOADED</span>`;
-              parseActionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="cpu" style="width:12px;height:12px;"></i> Parse Text</button>`;
+              actionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="cpu" style="width:12px;height:12px;"></i> Parse Text</button>`;
             }
 
             const activeBadge =
@@ -92,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td style="text-align: right;">
                   <div class="d-flex items-center justify-end gap-xs">
-                    ${parseActionBtn}
+                    ${actionBtn}
                     <button class="btn btn--ghost btn--sm btn-delete-resume" data-id="${r._id}" style="color: var(--color-danger);" title="Delete Resume">
                       <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
                     </button>

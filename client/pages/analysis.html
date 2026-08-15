@@ -26,185 +26,147 @@
       <header class="app-layout__topbar">
         <div class="d-flex items-center gap-md">
           <span class="text-sm text-secondary">Analysis /</span>
-          <span class="text-sm font-semibold text-primary">Senior_FullStack_Resume.pdf</span>
+          <span class="text-sm font-semibold text-primary" id="topbar-file-name">Resume Analysis Report</span>
         </div>
         <div class="d-flex items-center gap-md">
           <a href="jobs.html" class="btn btn--gradient btn--sm">
-            <i data-lucide="briefcase"></i> View 12 Matched Jobs
+            <i data-lucide="briefcase"></i> View Matched Jobs
           </a>
         </div>
       </header>
 
       <main class="app-layout__content">
-        
-        <!-- Score Overview Hero Card -->
-        <div class="score-overview-card mb-2xl">
-          <div class="ats-gauge" style="width: 140px; height: 140px; flex-shrink: 0;">
-            <svg viewBox="0 0 120 120">
-              <defs>
-                <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#10b981" />
-                  <stop offset="100%" stop-color="#06b6d4" />
-                </linearGradient>
-              </defs>
-              <circle class="ats-gauge__circle-bg" cx="60" cy="60" r="50" />
-              <circle class="ats-gauge__circle-fill" cx="60" cy="60" r="50" stroke-dasharray="314.15" stroke-dashoffset="37.69" />
-            </svg>
-            <div class="ats-gauge__content">
-              <div class="ats-gauge__score">88</div>
-              <div class="ats-gauge__label">ATS Score</div>
-            </div>
-          </div>
 
-          <div class="flex-1">
-            <div class="d-flex items-center gap-md mb-xs">
-              <h1 class="text-2xl font-bold">Strong ATS Compatibility</h1>
-              <span class="badge badge--success">Ready to Apply</span>
-            </div>
-            <p class="text-secondary text-sm mb-lg">
-              Your resume demonstrates strong technical depth, clear section hierarchy, and quantifiable impact metrics. Addressing the 3 high-priority recommendations below can boost your score to <strong>94+</strong>.
-            </p>
-            <div class="d-flex items-center gap-xl text-xs text-muted">
-              <span><strong>File:</strong> Senior_FullStack_Engineer_2026.pdf</span>
-              <span><strong>Analyzed:</strong> Today at 10:45 AM</span>
-              <span><strong>Experience Level:</strong> Senior (5+ years)</span>
-            </div>
+        <!-- Loading Overlay (Visible while analyzing) -->
+        <div class="card p-3xl text-center d-none" id="analysis-loading-overlay" style="max-width: 650px; margin: 40px auto;">
+          <div class="spinner spinner--lg mb-xl" style="margin: 0 auto;"></div>
+          <h2 class="text-2xl font-bold mb-xs">Analyzing Resume with Gemini AI...</h2>
+          <p class="text-secondary text-sm mb-xl">Evaluating ATS score, formatting standards, keyword relevance, and generating recommendations.</p>
+          <div class="d-flex flex-col gap-sm text-xs text-muted text-left" style="max-width: 400px; margin: 0 auto;">
+            <div class="d-flex items-center gap-xs"><i data-lucide="check" style="color:var(--color-success); width:14px; height:14px;"></i> Text layout and section extraction complete</div>
+            <div class="d-flex items-center gap-xs"><i data-lucide="loader" style="color:var(--color-accent); width:14px; height:14px;"></i> Gemini AI contextual evaluation in progress</div>
+            <div class="d-flex items-center gap-xs"><i data-lucide="circle" style="width:14px; height:14px;"></i> Calibrating 7 ATS scoring dimensions</div>
           </div>
         </div>
 
-        <!-- Category Score Breakdown (7 Categories Grid) -->
-        <h2 class="text-xl font-bold mb-lg">ATS Score Category Breakdown</h2>
-        <div class="d-grid grid-cols-3 gap-xl mb-3xl">
+        <!-- Empty State (When no analysis exists) -->
+        <div class="card p-3xl text-center d-none" id="analysis-empty-state">
+          <div class="d-inline-flex p-xl mb-md" style="background: rgba(99, 102, 241, 0.1); border-radius: 50%; color: var(--color-primary-light);">
+            <i data-lucide="file-search" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-xs">No Analysis Report Found</h3>
+          <p class="text-secondary mb-xl">Upload a resume to run your first comprehensive AI ATS evaluation.</p>
+          <a href="upload.html" class="btn btn--gradient btn--md">
+            <i data-lucide="upload-cloud"></i> Upload &amp; Analyze Resume
+          </a>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div id="analysis-content-wrapper">
           
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Skills Relevance</span>
-              <span class="font-mono font-bold text-success">18 / 20</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
-            <p class="text-xs text-muted">Strong keyword density for Node.js, React, and MongoDB.</p>
-          </div>
-
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Experience Quality</span>
-              <span class="font-mono font-bold text-success">17 / 20</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 85%;"></div></div>
-            <p class="text-xs text-muted">High-impact responsibility descriptions with clear ownership.</p>
-          </div>
-
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Structure &amp; Formatting</span>
-              <span class="font-mono font-bold text-success">14 / 15</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 93%;"></div></div>
-            <p class="text-xs text-muted">Standard headings detected; zero ATS parsing blockers.</p>
-          </div>
-
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Keyword Alignment</span>
-              <span class="font-mono font-bold text-success">13 / 15</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 86%;"></div></div>
-            <p class="text-xs text-muted">Core industry standard terminology is properly integrated.</p>
-          </div>
-
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Quantifiable Metrics</span>
-              <span class="font-mono font-bold text-success">9 / 10</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 90%;"></div></div>
-            <p class="text-xs text-muted">Frequent use of percentages, dollar amounts, and user counts.</p>
-          </div>
-
-          <div class="category-score-card">
-            <div class="d-flex justify-between items-center">
-              <span class="text-sm font-semibold">Section Completeness</span>
-              <span class="font-mono font-bold text-success">10 / 10</span>
-            </div>
-            <div class="progress-bar"><div class="progress-bar__fill" style="width: 100%;"></div></div>
-            <p class="text-xs text-muted">All 5 critical resume sections are present and populated.</p>
-          </div>
-
-        </div>
-
-        <!-- Actionable Suggestions Section -->
-        <div class="d-flex justify-between items-center mb-lg">
-          <h2 class="text-xl font-bold">Actionable Bullet Point Improvements</h2>
-          <span class="badge badge--warning">3 High Priority Recommendations</span>
-        </div>
-
-        <div class="d-flex flex-col gap-lg mb-3xl">
-          <div class="suggestion-card suggestion-card--high">
-            <div class="d-flex justify-between items-center">
-              <span class="badge badge--danger">High Priority • Experience</span>
-              <span class="text-xs text-muted">Impact Score: +3 pts</span>
-            </div>
-            <h3 class="text-base font-semibold">Strengthen backend API bullet points with scale metrics</h3>
-            <p class="text-sm text-secondary">Your current experience mentions building backend endpoints, but does not state request volume or latency reductions.</p>
-            <div class="suggestion-card__example">
-              <span class="text-danger">&minus; "Built REST APIs in Node.js for customer dashboard."</span><br>
-              <span class="text-success">&plus; "Architected high-throughput Node.js REST APIs serving 2M+ daily requests, reducing response latency by 35%."</span>
-            </div>
-          </div>
-
-          <div class="suggestion-card suggestion-card--high">
-            <div class="d-flex justify-between items-center">
-              <span class="badge badge--danger">High Priority • Keywords</span>
-              <span class="text-xs text-muted">Impact Score: +2 pts</span>
-            </div>
-            <h3 class="text-base font-semibold">Integrate missing cloud infrastructure keywords</h3>
-            <p class="text-sm text-secondary">Senior full-stack roles in 2026 frequently require CI/CD and containerization keywords.</p>
-            <div class="suggestion-card__example">
-              <span class="text-accent">&plus; Add: <code>Docker</code>, <code>CI/CD Pipelines</code>, <code>AWS S3/EC2</code>, <code>Redis Caching</code></span>
-            </div>
-          </div>
-
-          <div class="suggestion-card suggestion-card--medium">
-            <div class="d-flex justify-between items-center">
-              <span class="badge badge--warning">Medium Priority • Formatting</span>
-              <span class="text-xs text-muted">Impact Score: +1 pt</span>
-            </div>
-            <h3 class="text-base font-semibold">Standardize date ranges in work experience</h3>
-            <p class="text-sm text-secondary">Use consistent formats (e.g. "Aug 2023 – Present" rather than mixing "08/23" with "Present").</p>
-          </div>
-        </div>
-
-        <!-- Skills Matrix -->
-        <h2 class="text-xl font-bold mb-lg">Extracted Skills Matrix</h2>
-        <div class="card p-xl mb-3xl">
-          <div class="d-flex flex-col gap-lg">
-            <div>
-              <div class="text-xs font-bold text-muted text-uppercase mb-xs">Detected Technical Skills</div>
-              <div class="d-flex flex-wrap gap-xs">
-                <span class="skill-chip skill-chip--matched">JavaScript</span>
-                <span class="skill-chip skill-chip--matched">TypeScript</span>
-                <span class="skill-chip skill-chip--matched">Node.js</span>
-                <span class="skill-chip skill-chip--matched">Express</span>
-                <span class="skill-chip skill-chip--matched">React</span>
-                <span class="skill-chip skill-chip--matched">MongoDB</span>
-                <span class="skill-chip skill-chip--matched">FastAPI</span>
-                <span class="skill-chip skill-chip--matched">Python</span>
-                <span class="skill-chip skill-chip--matched">REST APIs</span>
-                <span class="skill-chip skill-chip--matched">Git</span>
+          <!-- Score Overview Hero Card -->
+          <div class="score-overview-card mb-2xl">
+            <div class="ats-gauge" style="width: 140px; height: 140px; flex-shrink: 0;">
+              <svg viewBox="0 0 120 120">
+                <defs>
+                  <linearGradient id="score-gradient-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#10b981" />
+                    <stop offset="100%" stop-color="#06b6d4" />
+                  </linearGradient>
+                </defs>
+                <circle class="ats-gauge__circle-bg" cx="60" cy="60" r="50" />
+                <circle class="ats-gauge__circle-fill" id="ats-gauge-fill" cx="60" cy="60" r="50" stroke-dasharray="314.15" stroke-dashoffset="60" />
+              </svg>
+              <div class="ats-gauge__content">
+                <div class="ats-gauge__score" id="ats-gauge-score">--</div>
+                <div class="ats-gauge__label">ATS Score</div>
               </div>
             </div>
 
-            <div>
-              <div class="text-xs font-bold text-muted text-uppercase mb-xs">Missing Recommended Keywords for Senior Level</div>
-              <div class="d-flex flex-wrap gap-xs">
-                <span class="skill-chip skill-chip--missing">+ Docker</span>
-                <span class="skill-chip skill-chip--missing">+ Kubernetes</span>
-                <span class="skill-chip skill-chip--missing">+ AWS Cloud</span>
-                <span class="skill-chip skill-chip--missing">+ Microservices</span>
-                <span class="skill-chip skill-chip--missing">+ Redis</span>
+            <div class="flex-1">
+              <div class="d-flex items-center gap-md mb-xs">
+                <h1 class="text-2xl font-bold" id="ats-score-title">Evaluating Resume Quality</h1>
+                <span class="badge badge--primary" id="ats-score-badge">Ready to Apply</span>
+              </div>
+              <p class="text-secondary text-sm mb-lg" id="ats-score-description">
+                Your resume demonstrates strong technical depth, clear section hierarchy, and quantifiable impact metrics.
+              </p>
+              <div class="d-flex items-center gap-xl text-xs text-muted">
+                <span><strong>Document:</strong> <span id="analysis-file-title">Resume.pdf</span></span>
+                <span><strong>AI Model:</strong> Google Gemini 1.5 Flash</span>
+                <span><strong>Status:</strong> Calibrated ATS Report</span>
               </div>
             </div>
           </div>
+
+          <!-- Category Score Breakdown (7 Categories Grid) -->
+          <h2 class="text-xl font-bold mb-lg">ATS Score Category Breakdown</h2>
+          <div class="d-grid grid-cols-3 gap-xl mb-3xl" id="categories-score-grid">
+            <!-- Dynamically populated by analysis.js -->
+          </div>
+
+          <!-- Strengths and Weaknesses Grid -->
+          <div class="d-grid grid-cols-2 gap-xl mb-3xl">
+            <!-- Strengths -->
+            <div class="card p-xl">
+              <div class="d-flex items-center gap-sm mb-lg">
+                <div class="p-xs" style="background: rgba(16, 185, 129, 0.15); border-radius: var(--radius-md); color: var(--color-success);">
+                  <i data-lucide="thumbs-up"></i>
+                </div>
+                <h3 class="text-lg font-bold">Key Strengths</h3>
+              </div>
+              <ul class="d-flex flex-col gap-md" id="strengths-list" style="list-style:none;">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+
+            <!-- Weaknesses -->
+            <div class="card p-xl">
+              <div class="d-flex items-center gap-sm mb-lg">
+                <div class="p-xs" style="background: rgba(245, 158, 11, 0.15); border-radius: var(--radius-md); color: var(--color-warning);">
+                  <i data-lucide="alert-triangle"></i>
+                </div>
+                <h3 class="text-lg font-bold">Areas for Improvement</h3>
+              </div>
+              <ul class="d-flex flex-col gap-md" id="weaknesses-list" style="list-style:none;">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- Actionable Suggestions Section -->
+          <div class="mb-3xl">
+            <h2 class="text-xl font-bold mb-lg">Prioritized Improvement Suggestions</h2>
+            <div id="suggestions-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Skills Taxonomy Breakdown -->
+          <div class="card p-xl mb-3xl">
+            <h3 class="text-lg font-bold mb-lg">Skills Analysis &amp; Keyword Coverage</h3>
+            
+            <div class="mb-lg">
+              <span class="text-xs font-bold text-muted text-uppercase mb-xs d-block">Verified Technical Skills</span>
+              <div class="d-flex flex-wrap gap-xs" id="technical-skills-chips"></div>
+            </div>
+
+            <div class="mb-lg">
+              <span class="text-xs font-bold text-muted text-uppercase mb-xs d-block">Soft &amp; Leadership Skills</span>
+              <div class="d-flex flex-wrap gap-xs" id="soft-skills-chips"></div>
+            </div>
+
+            <div class="mb-lg">
+              <span class="text-xs font-bold text-danger text-uppercase mb-xs d-block">Recommended Missing Skills</span>
+              <div class="d-flex flex-wrap gap-xs" id="missing-skills-chips"></div>
+            </div>
+
+            <div>
+              <span class="text-xs font-bold text-success text-uppercase mb-xs d-block">High-Demand Trending Skills</span>
+              <div class="d-flex flex-wrap gap-xs" id="trending-skills-chips"></div>
+            </div>
+          </div>
+
         </div>
 
       </main>
@@ -213,5 +175,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/analysis.js"></script>
 </body>
 </html>
