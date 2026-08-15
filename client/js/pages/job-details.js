@@ -1,16 +1,18 @@
 /**
- * Job Details & Match Compatibility Page Controller (pages/job-details.js)
- * Displays job specifications, 6-dimension match score breakdown, skill gap chips, and AI interview advice.
+ * Job Details, Matching, Save & Application Page Controller (pages/job-details.js)
+ * Displays job specifications, 6-dimension match score, AI insights, bookmarking, and application tracker integration.
  */
 
 import { authService } from '../services/auth.service.js';
 import { getJobByIdApi } from '../api/job.api.js';
 import { getJobMatchApi, getJobMatchExplanationApi } from '../api/jobMatching.api.js';
+import { saveJobApi, unsaveJobApi, checkJobSavedStatusApi } from '../api/savedJob.api.js';
+import { getJobApplicationStatusApi, createApplicationApi } from '../api/application.api.js';
 import { showToast } from '../components/toast.js';
 import { renderIcons } from '../utils/dom.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Check auth state
+  // Authentication Guard
   await authService.requireAuthGuard();
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +32,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   const jobDescEl = document.getElementById('job-detail-description');
   const jobReqEduEl = document.getElementById('job-detail-education');
   const jobReqExpEl = document.getElementById('job-detail-experience');
-  const jobApplyBtn = document.getElementById('job-detail-apply-btn');
+
+  // Save Job Elements
+  const saveBtn = document.getElementById('btn-save-job-detail');
+  const saveText = document.getElementById('text-save-job');
+  const saveIcon = document.getElementById('icon-save-job');
+
+  // Application Pipeline Elements
+  const unappliedActions = document.getElementById('job-unapplied-actions');
+  const appliedBanner = document.getElementById('job-applied-status-banner');
+  const appliedStageText = document.getElementById('applied-stage-text');
+  const openApplyBtn = document.getElementById('btn-open-apply-modal');
+
+  // Quick Apply Modal Elements
+  const applyModal = document.getElementById('modal-apply-job');
+  const applyOverlay = document.getElementById('modal-apply-overlay');
+  const closeApplyBtn = document.getElementById('btn-close-apply-modal');
+  const cancelApplyBtn = document.getElementById('btn-cancel-apply');
+  const applyForm = document.getElementById('form-submit-application');
+  const modalResumeName = document.getElementById('modal-resume-name');
+  const modalApplyNotes = document.getElementById('modal-apply-notes');
 
   // Match & Skills Containers
   const matchBadgeEl = document.getElementById('job-detail-match-badge');
@@ -47,6 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const aiGapsEl = document.getElementById('job-ai-gaps');
   const aiAdviceEl = document.getElementById('job-ai-advice');
   const refreshAiBtn = document.getElementById('btn-refresh-ai-explanation');
+
+  let isJobSaved = false;
 
   function getCompanyInitials(name = '') {
     const parts = name.trim().split(/\s+/);
@@ -125,6 +148,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function updateSaveButtonUi(saved) {
+    isJobSaved = saved;
+    if (!saveBtn || !saveText) return;
+    if (saved) {
+      saveBtn.className = 'btn btn--secondary btn--sm';
+      saveText.textContent = 'Saved';
+    } else {
+      saveBtn.className = 'btn btn--outline btn--sm';
+      saveText.textContent = 'Save Job';
+    }
+  }
+
+  function updateApplicationBanner(app) {
+    if (app && ['applied', 'interviewing', 'offered'].includes(app.status)) {
+      if (unappliedActions) unappliedActions.classList.add('d-none');
+      if (appliedBanner) appliedBanner.classList.remove('d-none');
+      if (appliedStageText) {
+        appliedStageText.textContent = `Current Stage: ${app.status.toUpperCase()} (Applied on ${new Date(app.appliedAt).toLocaleDateString()})`;
+      }
+    } else {
+      if (unappliedActions) unappliedActions.classList.remove('d-none');
+      if (appliedBanner) appliedBanner.classList.add('d-none');
+    }
+  }
+
   if (!jobId) {
     if (loadingOverlay) loadingOverlay.classList.add('d-none');
     if (emptyState) emptyState.classList.remove('d-none');
@@ -132,10 +180,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    // 1. Fetch Job Details & Deterministic Compatibility in parallel
-    const [jobRes, matchRes] = await Promise.all([
+    // 1. Fetch Job Details, Deterministic Match, Saved Status, and Application Status in parallel
+    const [jobRes, matchRes, savedRes, appRes] = await Promise.all([
       getJobByIdApi(jobId),
-      getJobMatchApi(jobId).catch(() => null)
+      getJobMatchApi(jobId).catch(() => null),
+      checkJobSavedStatusApi(jobId).catch(() => ({ data: { isSaved: false } })),
+      getJobApplicationStatusApi(jobId).catch(() => ({ data: { application: null } }))
     ]);
 
     const job = jobRes?.data?.job;
@@ -164,6 +214,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (jobReqEduEl) jobReqEduEl.textContent = job.requirements?.education || 'Degree in Computer Science or related engineering.';
     if (jobReqExpEl) jobReqExpEl.textContent = job.requirements?.experience || 'Direct experience in related technologies.';
 
+    // Hydrate Saved State
+    updateSaveButtonUi(Boolean(savedRes?.data?.isSaved));
+
+    // Hydrate Application State
+    updateApplicationBanner(appRes?.data?.application);
+
     // Hydrate Match Score & Badges
     const match = matchRes?.data;
     if (match && match.matchScore !== undefined) {
@@ -175,6 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         else matchBadgeEl.className = 'badge badge--warning font-bold';
       }
       if (matchCategoryEl) matchCategoryEl.textContent = match.category || 'High Alignment';
+      if (modalResumeName && match.resumeName) modalResumeName.textContent = `Attached: ${match.resumeName}`;
 
       // Matching Skills Chips
       if (matchingSkillsContainer) {
@@ -209,25 +266,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (matchBadgeEl) matchBadgeEl.textContent = 'Unrated';
     }
 
-    // Hydrate Application CTA
-    if (jobApplyBtn) {
-      if (job.applicationUrl) {
-        jobApplyBtn.href = job.applicationUrl;
-        jobApplyBtn.target = '_blank';
-        jobApplyBtn.rel = 'noopener noreferrer';
-      } else {
-        jobApplyBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          showToast(`Application submitted directly to ${job.company}!`, 'success');
-        });
-      }
-    }
-
     if (loadingOverlay) loadingOverlay.classList.add('d-none');
     if (contentWrapper) contentWrapper.classList.remove('d-none');
     renderIcons();
 
-    // 2. Load Deep AI Explanation in background
+    // 2. Load Deep AI Explanation
     loadAiExplanation();
 
     // Attach Refresh Listener
@@ -235,6 +278,60 @@ document.addEventListener('DOMContentLoaded', async () => {
       refreshAiBtn.addEventListener('click', () => {
         showToast('Refreshing AI recruiter evaluation...', 'info');
         loadAiExplanation();
+      });
+    }
+
+    // Attach Save/Unsave Listener
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        try {
+          if (isJobSaved) {
+            await unsaveJobApi(jobId);
+            updateSaveButtonUi(false);
+            showToast('Removed from saved bookmarks', 'info');
+          } else {
+            await saveJobApi(jobId);
+            updateSaveButtonUi(true);
+            showToast('Job saved to bookmarks!', 'success');
+          }
+          renderIcons();
+        } catch (err) {
+          showToast(err.message || 'Failed to update bookmark', 'error');
+        }
+      });
+    }
+
+    // Modal Handlers
+    function openApplyModal() {
+      if (applyModal) applyModal.classList.remove('d-none');
+    }
+    function closeApplyModal() {
+      if (applyModal) applyModal.classList.add('d-none');
+    }
+
+    if (openApplyBtn) openApplyBtn.addEventListener('click', openApplyModal);
+    if (applyOverlay) applyOverlay.addEventListener('click', closeApplyModal);
+    if (closeApplyBtn) closeApplyBtn.addEventListener('click', closeApplyModal);
+    if (cancelApplyBtn) cancelApplyBtn.addEventListener('click', closeApplyModal);
+
+    if (applyForm) {
+      applyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const notes = modalApplyNotes?.value?.trim() || '';
+
+        try {
+          const appResponse = await createApplicationApi({
+            jobId,
+            notes
+          });
+          const createdApp = appResponse?.data?.application;
+          showToast('Job application recorded in your pipeline!', 'success');
+          closeApplyModal();
+          updateApplicationBanner(createdApp);
+          renderIcons();
+        } catch (err) {
+          showToast(err.message || 'Failed to submit application', 'error');
+        }
       });
     }
   } catch (err) {

@@ -1,12 +1,14 @@
 /**
  * User Dashboard Page Controller (pages/dashboard.js)
- * Hydrates user session details, monthly limits, latest ATS score, and top matched job recommendations.
+ * Hydrates user session details, monthly limits, latest ATS score, saved jobs count, application pipeline metrics, and top matched recommendations.
  */
 
 import { authService } from '../services/auth.service.js';
 import { getSubscriptionApi } from '../api/user.api.js';
 import { getUserAnalysesApi } from '../api/analysis.api.js';
 import { getRecommendedJobsApi } from '../api/jobMatching.api.js';
+import { getSavedJobsApi } from '../api/savedJob.api.js';
+import { getApplicationStatsApi } from '../api/application.api.js';
 import { renderIcons } from '../utils/dom.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -20,6 +22,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const monthlyLimitBadge = document.getElementById('dashboard-monthly-limit-badge');
   const atsScoreValue = document.getElementById('dashboard-ats-score-value');
   const atsScoreBadge = document.getElementById('dashboard-ats-score-badge');
+  const savedJobsValue = document.getElementById('dashboard-saved-jobs-value');
+  const savedJobsBadge = document.getElementById('dashboard-saved-jobs-badge');
+  const activeAppsValue = document.getElementById('dashboard-active-apps-value');
+  const activeAppsBadge = document.getElementById('dashboard-active-apps-badge');
   const topMatchesContainer = document.getElementById('dashboard-top-matches-container');
   const matchesSubtitle = document.getElementById('dashboard-matches-subtitle');
   const matchesViewAll = document.getElementById('dashboard-matches-view-all');
@@ -51,6 +57,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (err) {
     // Non-critical background metric fetch
+  }
+
+  // Hydrate Saved Jobs Metric Card
+  try {
+    const savedRes = await getSavedJobsApi(1, 1);
+    const totalSaved = savedRes?.data?.total || 0;
+    if (savedJobsValue) savedJobsValue.textContent = totalSaved;
+    if (savedJobsBadge) savedJobsBadge.textContent = totalSaved === 1 ? '1 role bookmarked' : `${totalSaved} roles bookmarked`;
+  } catch (err) {
+    // Non-critical metric fetch
+  }
+
+  // Hydrate Active Applications Metric Card
+  try {
+    const statsRes = await getApplicationStatsApi();
+    const stats = statsRes?.data?.stats;
+    if (stats) {
+      if (activeAppsValue) activeAppsValue.textContent = stats.active || 0;
+      if (activeAppsBadge) {
+        activeAppsBadge.textContent = stats.interviewing > 0
+          ? `${stats.interviewing} in interview round`
+          : `${stats.applied} submitted`;
+      }
+    }
+  } catch (err) {
+    // Non-critical metric fetch
   }
 
   // Hydrate Latest ATS Score Card from Analysis API

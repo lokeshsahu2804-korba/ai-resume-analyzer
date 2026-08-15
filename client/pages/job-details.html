@@ -28,8 +28,11 @@
           <a href="jobs.html" class="btn btn--ghost btn--sm">&larr; Back to Job Listings</a>
         </div>
         <div class="d-flex items-center gap-md">
-          <a href="jobs.html" class="btn btn--outline btn--sm">
-            <i data-lucide="sparkles"></i> View All Recommendations
+          <button class="btn btn--outline btn--sm" id="btn-save-job-detail">
+            <i data-lucide="bookmark" id="icon-save-job"></i> <span id="text-save-job">Save Job</span>
+          </button>
+          <a href="applications.html" class="btn btn--outline btn--sm">
+            <i data-lucide="send"></i> My Applications
           </a>
         </div>
       </header>
@@ -161,17 +164,67 @@
                 <li id="job-detail-experience">Proven hands-on software development experience.</li>
               </ul>
 
-              <div class="d-flex gap-md pt-lg" style="border-top: 1px solid var(--color-border);">
-                <a href="#" class="btn btn--gradient btn--lg flex-1" id="job-detail-apply-btn">
-                  Apply for Position <i data-lucide="external-link"></i>
-                </a>
+              <!-- Application Action Container -->
+              <div class="pt-lg" style="border-top: 1px solid var(--color-border);" id="job-action-container">
+                <div class="d-flex gap-md" id="job-unapplied-actions">
+                  <button class="btn btn--gradient btn--lg flex-1" id="btn-open-apply-modal">
+                    Apply for Position <i data-lucide="send"></i>
+                  </button>
+                </div>
+
+                <div class="p-md d-flex justify-between items-center d-none" id="job-applied-status-banner" style="background: rgba(99, 102, 241, 0.1); border-radius: var(--radius-md); border: 1px solid var(--color-primary);">
+                  <div class="d-flex items-center gap-sm">
+                    <i data-lucide="check-circle" style="color: var(--color-primary-light);"></i>
+                    <div>
+                      <div class="text-sm font-bold text-primary">Application Active in Pipeline</div>
+                      <div class="text-xs text-muted" id="applied-stage-text">Stage: Applied</div>
+                    </div>
+                  </div>
+                  <a href="applications.html" class="btn btn--outline btn--sm">View in Pipeline &rarr;</a>
+                </div>
               </div>
+
             </div>
 
           </div>
 
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- Apply Job Modal -->
+  <div class="modal d-none" id="modal-apply-job">
+    <div class="modal__overlay" id="modal-apply-overlay"></div>
+    <div class="modal__dialog" style="max-width: 480px;">
+      <div class="modal__header">
+        <h3 class="text-lg font-bold">Submit Job Application</h3>
+        <button class="btn btn--ghost btn--sm" id="btn-close-apply-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal__body">
+        <form id="form-submit-application">
+          <p class="text-xs text-secondary mb-md">
+            Your application will be recorded in your pipeline tracker with an immutable match score snapshot.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label">Resume to Attach</label>
+            <div class="p-sm" style="background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+              <span class="text-xs font-semibold text-primary" id="modal-resume-name">Active Resume (Default)</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Application Notes / Referral (Optional)</label>
+            <textarea class="form-textarea" id="modal-apply-notes" rows="3" placeholder="e.g. Applied via employee referral. Mentioned cloud architecture experience..."></textarea>
+          </div>
+
+          <div class="d-flex justify-end gap-xs pt-md" style="border-top: 1px solid var(--color-border);">
+            <button type="button" class="btn btn--outline btn--sm" id="btn-cancel-apply">Cancel</button>
+            <button type="submit" class="btn btn--primary btn--sm" id="btn-confirm-apply">Submit Application</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
