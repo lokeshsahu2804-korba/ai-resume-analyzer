@@ -12,6 +12,7 @@ const userRoutes = require('./user.routes');
 const resumeRoutes = require('./resume.routes');
 const analysisRoutes = require('./analysis.routes');
 const jobRoutes = require('./job.routes');
+const applicationRoutes = require('./application.routes');
 const adminRoutes = require('./admin.routes');
 
 // Route Registrations
@@ -21,6 +22,7 @@ router.use('/users', userRoutes);
 router.use('/resumes', resumeRoutes);
 router.use('/analyses', analysisRoutes);
 router.use('/jobs', jobRoutes);
+router.use('/applications', applicationRoutes);
 router.use('/admin', adminRoutes);
 
 module.exports = router;
