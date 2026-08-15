@@ -145,35 +145,13 @@
             <div class="card__header">
               <div>
                 <h2 class="card__title">Top Job Matches</h2>
-                <div class="card__subtitle">Based on your parsed skills</div>
+                <div class="card__subtitle" id="dashboard-matches-subtitle">Based on your parsed skills</div>
               </div>
-              <a href="jobs.html" class="text-xs text-accent">View all 12 &rarr;</a>
+              <a href="jobs.html" class="text-xs text-accent" id="dashboard-matches-view-all">View all &rarr;</a>
             </div>
 
-            <div class="d-flex flex-col gap-md">
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div>
-                  <div class="text-sm font-semibold">Lead Full Stack Engineer</div>
-                  <div class="text-xs text-muted">Stripe • Remote (India) • ₹35L - ₹45L</div>
-                </div>
-                <span class="badge badge--match">94% Match</span>
-              </div>
-
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div>
-                  <div class="text-sm font-semibold">Senior Node.js Backend Architect</div>
-                  <div class="text-xs text-muted">Razorpay • Bengaluru • ₹30L - ₹40L</div>
-                </div>
-                <span class="badge badge--match">91% Match</span>
-              </div>
-
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div>
-                  <div class="text-sm font-semibold">AI Full Stack Developer</div>
-                  <div class="text-xs text-muted">Swiggy • Hybrid • ₹28L - ₹36L</div>
-                </div>
-                <span class="badge badge--match">88% Match</span>
-              </div>
+            <div class="d-flex flex-col gap-md" id="dashboard-top-matches-container">
+              <div class="p-md text-center text-xs text-muted">Loading your personalized match recommendations...</div>
             </div>
 
             <div class="card__footer">

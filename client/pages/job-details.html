@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="View complete job specifications, required technical competencies, compensation, and apply.">
-  <title>Job Details — ResumeAI</title>
+  <meta name="description" content="View complete job specifications, required technical competencies, compatibility match breakdown, and apply.">
+  <title>Job Details &amp; AI Compatibility — ResumeAI</title>
   
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="../css/base.css">
@@ -29,7 +29,7 @@
         </div>
         <div class="d-flex items-center gap-md">
           <a href="jobs.html" class="btn btn--outline btn--sm">
-            <i data-lucide="compass"></i> Explore All Roles
+            <i data-lucide="sparkles"></i> View All Recommendations
           </a>
         </div>
       </header>
@@ -40,7 +40,7 @@
           <!-- Loading State -->
           <div class="card p-3xl text-center" id="job-details-loading" style="margin: 40px auto;">
             <div class="spinner spinner--lg mb-md" style="margin: 0 auto;"></div>
-            <p class="text-secondary text-sm">Loading job specifications...</p>
+            <p class="text-secondary text-sm">Evaluating compatibility match &amp; skill gaps...</p>
           </div>
 
           <!-- Empty State -->
@@ -67,7 +67,8 @@
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="badge badge--primary" id="job-detail-exp-badge" style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">Experience Level</span>
+                  <span class="badge badge--match" id="job-detail-match-badge" style="font-size: 0.95rem; padding: 0.4rem 0.85rem;">--% Match</span>
+                  <div class="text-xs text-muted mt-2xs" id="job-detail-match-category">Compatibility Rating</div>
                 </div>
               </div>
 
@@ -78,11 +79,72 @@
               </div>
             </div>
 
-            <!-- Required Skills Section -->
+            <!-- Skill Match & Gap Breakdown -->
             <div class="card p-xl mb-2xl">
-              <h3 class="text-base font-bold mb-md">Required Technical Skills</h3>
-              <div class="d-flex flex-wrap gap-xs" id="job-detail-skills">
+              <h3 class="text-base font-bold mb-md">Skill Gap &amp; Compatibility Analysis</h3>
+              <div class="d-flex flex-col gap-md">
+                <div>
+                  <div class="text-xs font-semibold text-success mb-xs">Matching Skills Detected in Your Resume</div>
+                  <div class="d-flex flex-wrap gap-xs" id="job-matching-skills-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-xs font-semibold text-warning mb-xs">Recommended Missing Skills to Highlight</div>
+                  <div class="d-flex flex-wrap gap-xs" id="job-missing-skills-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <div id="bonus-skills-wrapper" class="d-none">
+                  <div class="text-xs font-semibold text-primary mb-xs">Additional Candidate Domain Skills (Bonus)</div>
+                  <div class="d-flex flex-wrap gap-xs" id="job-bonus-skills-container">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6-Category Match Breakdown Grid -->
+            <div class="card p-xl mb-2xl">
+              <h3 class="text-base font-bold mb-md">Compatibility Score Breakdown</h3>
+              <div class="d-grid grid-cols-3 gap-md" id="job-match-breakdown-grid">
                 <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- AI Contextual Explanation Card -->
+            <div class="card p-2xl mb-2xl" id="job-ai-explanation-card">
+              <div class="d-flex justify-between items-center mb-md">
+                <div class="d-flex items-center gap-xs">
+                  <i data-lucide="sparkles" style="color: var(--color-primary-light);"></i>
+                  <h3 class="text-lg font-bold">AI Recruiter Insights &amp; Interview Advice</h3>
+                </div>
+                <button class="btn btn--outline btn--sm" id="btn-refresh-ai-explanation">
+                  <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Refresh AI Insights
+                </button>
+              </div>
+
+              <p class="text-sm text-secondary mb-lg" id="job-ai-summary">
+                Analyzing candidate experience against job responsibilities...
+              </p>
+
+              <div class="d-grid grid-cols-2 gap-md mb-lg">
+                <div class="p-md" style="background: rgba(16, 185, 129, 0.08); border-radius: var(--radius-md); border-left: 3px solid var(--color-success);">
+                  <strong class="text-xs text-success d-block mb-xs">Key Candidate Strengths</strong>
+                  <ul class="text-xs text-secondary d-flex flex-col gap-xs" id="job-ai-strengths" style="padding-left: 1rem;"></ul>
+                </div>
+
+                <div class="p-md" style="background: rgba(245, 158, 11, 0.08); border-radius: var(--radius-md); border-left: 3px solid var(--color-warning);">
+                  <strong class="text-xs text-warning d-block mb-xs">Areas to Address in Interview</strong>
+                  <ul class="text-xs text-secondary d-flex flex-col gap-xs" id="job-ai-gaps" style="padding-left: 1rem;"></ul>
+                </div>
+              </div>
+
+              <div class="p-md" style="background: rgba(0, 0, 0, 0.25); border-radius: var(--radius-md);">
+                <strong class="text-xs text-accent-light d-block mb-xs">💡 Interview Preparation Advice</strong>
+                <ul class="text-xs text-secondary d-flex flex-col gap-xs" id="job-ai-advice" style="padding-left: 1rem;"></ul>
               </div>
             </div>
 

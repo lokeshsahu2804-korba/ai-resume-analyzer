@@ -1,11 +1,13 @@
 /**
  * User Dashboard Page Controller (pages/dashboard.js)
- * Applies authentication route guard and hydrates user session details, monthly limits, and latest ATS score.
+ * Hydrates user session details, monthly limits, latest ATS score, and top matched job recommendations.
  */
 
 import { authService } from '../services/auth.service.js';
 import { getSubscriptionApi } from '../api/user.api.js';
 import { getUserAnalysesApi } from '../api/analysis.api.js';
+import { getRecommendedJobsApi } from '../api/jobMatching.api.js';
+import { renderIcons } from '../utils/dom.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Enforce authentication guard
@@ -18,6 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const monthlyLimitBadge = document.getElementById('dashboard-monthly-limit-badge');
   const atsScoreValue = document.getElementById('dashboard-ats-score-value');
   const atsScoreBadge = document.getElementById('dashboard-ats-score-badge');
+  const topMatchesContainer = document.getElementById('dashboard-top-matches-container');
+  const matchesSubtitle = document.getElementById('dashboard-matches-subtitle');
+  const matchesViewAll = document.getElementById('dashboard-matches-view-all');
 
   // Hydrate User Greeting
   if (greetingSpan && user?.name) {
@@ -72,5 +77,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (err) {
     // Non-critical background metric fetch
+  }
+
+  // Hydrate Top Matched Jobs from Recommendations API
+  if (topMatchesContainer) {
+    try {
+      const recRes = await getRecommendedJobsApi({ limit: 3 });
+      const { jobs, total, hasResume, activeResumeName } = recRes?.data || {};
+
+      if (matchesSubtitle && activeResumeName) {
+        matchesSubtitle.textContent = `Calibrated against ${activeResumeName}`;
+      }
+      if (matchesViewAll && total !== undefined) {
+        matchesViewAll.textContent = `View all ${total} \u2192`;
+      }
+
+      if (!jobs || jobs.length === 0) {
+        topMatchesContainer.innerHTML = `
+          <div class="p-md text-center text-xs text-muted">
+            ${hasResume ? 'No active jobs matched your criteria.' : 'Upload a resume to see personalized matched roles.'}
+          </div>
+        `;
+      } else {
+        topMatchesContainer.innerHTML = jobs
+          .map((job) => {
+            const score = job.matchScore !== null && job.matchScore !== undefined ? Math.round(job.matchScore) : null;
+            let badgeClass = 'badge--secondary';
+            if (score >= 85) badgeClass = 'badge--match';
+            else if (score >= 70) badgeClass = 'badge--primary';
+            else if (score >= 50) badgeClass = 'badge--warning';
+
+            const badgeHtml = score !== null
+              ? `<span class="badge ${badgeClass}">${score}% Match</span>`
+              : `<span class="badge badge--secondary">Unrated</span>`;
+
+            return `
+              <a href="job-details.html?id=${job._id}" class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: background var(--transition-fast);">
+                <div>
+                  <div class="text-sm font-semibold text-primary">${job.title}</div>
+                  <div class="text-xs text-muted">${job.company} • ${job.location}</div>
+                </div>
+                ${badgeHtml}
+              </a>
+            `;
+          })
+          .join('');
+      }
+      renderIcons();
+    } catch (err) {
+      topMatchesContainer.innerHTML = `
+        <div class="p-md text-center text-xs text-muted">
+          Explore open tech roles in our jobs directory.
+        </div>
+      `;
+    }
   }
 });

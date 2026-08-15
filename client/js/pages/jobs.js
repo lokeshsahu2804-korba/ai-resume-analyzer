@@ -1,10 +1,11 @@
 /**
- * Job Listings Page Controller (pages/jobs.js)
- * Manages live search, multi-criteria filtering, pagination, and dynamic job card rendering.
+ * Job Listings & Recommendations Page Controller (pages/jobs.js)
+ * Manages personalized recommendations, compatibility score badges, search filters, and pagination.
  */
 
 import { authService } from '../services/auth.service.js';
 import { getJobsApi } from '../api/job.api.js';
+import { getRecommendedJobsApi } from '../api/jobMatching.api.js';
 import { showToast } from '../components/toast.js';
 import { renderIcons } from '../utils/dom.js';
 
@@ -12,6 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check auth state
   await authService.requireAuthGuard();
 
+  const tabRecommended = document.getElementById('tab-recommended-jobs');
+  const tabAll = document.getElementById('tab-all-jobs');
   const searchInput = document.getElementById('job-search-input');
   const expSelect = document.getElementById('job-exp-filter');
   const typeSelect = document.getElementById('job-type-filter');
@@ -23,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const paginationWrapper = document.getElementById('jobs-pagination-wrapper');
   const totalCountEl = document.getElementById('jobs-total-count');
 
+  let activeMode = 'recommended'; // 'recommended' | 'all'
   let currentPage = 1;
   const pageLimit = 8;
   let searchDebounceTimer = null;
@@ -54,6 +58,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     return (name.slice(0, 2) || 'CO').toUpperCase();
   }
 
+  function getMatchBadge(score, category) {
+    if (score === null || score === undefined) {
+      return '<span class="badge badge--secondary font-bold">Unrated</span>';
+    }
+    const rounded = Math.round(score);
+    if (rounded >= 85) {
+      return `<span class="badge badge--match font-bold"><i data-lucide="sparkles" style="width:12px;height:12px;"></i> ${rounded}% Match (${category})</span>`;
+    } else if (rounded >= 70) {
+      return `<span class="badge badge--primary font-bold">${rounded}% Match (${category})</span>`;
+    } else if (rounded >= 50) {
+      return `<span class="badge badge--warning font-bold">${rounded}% Match</span>`;
+    } else {
+      return `<span class="badge badge--secondary font-bold">${rounded}% Match</span>`;
+    }
+  }
+
   async function loadJobs(page = 1) {
     currentPage = page;
 
@@ -67,19 +87,56 @@ document.addEventListener('DOMContentLoaded', async () => {
       const experienceLevel = expSelect?.value || '';
       const type = typeSelect?.value || '';
 
-      const response = await getJobsApi({
-        search,
-        experienceLevel,
-        type,
-        page: currentPage,
-        limit: pageLimit,
-        sort: '-postedAt'
-      });
+      let jobs = [];
+      let total = 0;
+      let pages = 1;
+      let resumeName = '';
 
-      const { jobs, total, pages } = response?.data || { jobs: [], total: 0, pages: 1 };
+      if (activeMode === 'recommended') {
+        const response = await getRecommendedJobsApi({
+          page: currentPage,
+          limit: pageLimit
+        });
+        const data = response?.data || {};
+        jobs = data.jobs || [];
+        total = data.total || 0;
+        pages = data.pages || 1;
+        resumeName = data.activeResumeName || '';
+
+        // Apply client filters if user typed keywords
+        if (search || experienceLevel || type) {
+          jobs = jobs.filter((j) => {
+            const matchesSearch =
+              !search ||
+              `${j.title} ${j.company} ${j.description} ${(j.requirements?.skills || []).join(' ')}`
+                .toLowerCase()
+                .includes(search.toLowerCase());
+            const matchesExp = !experienceLevel || j.experienceLevel === experienceLevel;
+            const matchesType = !type || j.type === type;
+            return matchesSearch && matchesExp && matchesType;
+          });
+        }
+      } else {
+        const response = await getJobsApi({
+          search,
+          experienceLevel,
+          type,
+          page: currentPage,
+          limit: pageLimit,
+          sort: '-postedAt'
+        });
+        const data = response?.data || {};
+        jobs = data.jobs || [];
+        total = data.total || 0;
+        pages = data.pages || 1;
+      }
 
       if (totalCountEl) {
-        totalCountEl.textContent = `Showing ${jobs.length} of ${total} available technology roles`;
+        if (activeMode === 'recommended' && resumeName) {
+          totalCountEl.innerHTML = `Showing personalized recommendations calibrated against active resume: <strong>${resumeName}</strong>`;
+        } else {
+          totalCountEl.textContent = `Showing ${jobs.length} of ${total} available technology roles in catalog`;
+        }
       }
 
       if (!jobs || jobs.length === 0) {
@@ -93,18 +150,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           .map((job) => {
             const initials = getCompanyInitials(job.company);
             const salaryStr = formatSalary(job.salary);
-            const expLabel =
-              job.experienceLevel === 'senior'
-                ? 'Senior (5+ yrs)'
-                : job.experienceLevel === 'lead'
-                ? 'Lead / Staff'
-                : job.experienceLevel === 'entry'
-                ? 'Entry Level'
-                : 'Mid Level (2-4 yrs)';
+            const matchBadgeHtml = getMatchBadge(job.matchScore, job.category);
 
-            const skillsHtml = (job.requirements?.skills || [])
-              .slice(0, 5)
+            // Render matching vs missing skills chips
+            const matchingChips = (job.matchingSkills || job.requirements?.skills || [])
+              .slice(0, 4)
               .map((s) => `<span class="skill-chip skill-chip--matched">${s}</span>`)
+              .join(' ');
+
+            const missingChips = (job.missingSkills || [])
+              .slice(0, 2)
+              .map((s) => `<span class="skill-chip skill-chip--missing">+ ${s}</span>`)
               .join(' ');
 
             return `
@@ -118,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="text-xs text-muted">${job.company} • ${job.location}</div>
                       </div>
                     </div>
-                    <span class="badge badge--primary">${expLabel}</span>
+                    ${matchBadgeHtml}
                   </div>
 
                   <p class="text-xs text-secondary mb-md" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -126,14 +182,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                   </p>
 
                   <div class="d-flex flex-wrap gap-xs mb-md">
-                    ${skillsHtml}
+                    ${matchingChips}
+                    ${missingChips}
                   </div>
                 </div>
 
                 <div class="card__footer pt-md">
                   <span class="font-mono text-xs font-bold text-success">${salaryStr}</span>
                   <div class="d-flex gap-xs">
-                    <a href="job-details.html?id=${job._id}" class="btn btn--primary btn--sm">View Details</a>
+                    <a href="job-details.html?id=${job._id}" class="btn btn--primary btn--sm">View Compatibility</a>
                   </div>
                 </div>
               </div>
@@ -176,6 +233,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // Tab Switcher
+  if (tabRecommended && tabAll) {
+    tabRecommended.addEventListener('click', () => {
+      activeMode = 'recommended';
+      tabRecommended.className = 'btn btn--gradient btn--sm tab-filter-btn';
+      tabAll.className = 'btn btn--ghost btn--sm tab-filter-btn';
+      loadJobs(1);
+    });
+
+    tabAll.addEventListener('click', () => {
+      activeMode = 'all';
+      tabAll.className = 'btn btn--gradient btn--sm tab-filter-btn';
+      tabRecommended.className = 'btn btn--ghost btn--sm tab-filter-btn';
+      loadJobs(1);
+    });
+  }
+
   // Filter Event Listeners
   if (filterBtn) {
     filterBtn.addEventListener('click', (e) => {
@@ -203,13 +277,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  if (expSelect) {
-    expSelect.addEventListener('change', () => loadJobs(1));
-  }
-
-  if (typeSelect) {
-    typeSelect.addEventListener('change', () => loadJobs(1));
-  }
+  if (expSelect) expSelect.addEventListener('change', () => loadJobs(1));
+  if (typeSelect) typeSelect.addEventListener('change', () => loadJobs(1));
 
   // Initial Load
   await loadJobs(1);
