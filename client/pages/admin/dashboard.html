@@ -26,10 +26,13 @@
       <header class="app-layout__topbar">
         <div class="d-flex items-center gap-md">
           <span class="text-sm text-secondary">Admin Portal /</span>
-          <span class="text-sm font-semibold text-primary">System Analytics Overview</span>
+          <span class="text-sm font-semibold text-primary">Platform Analytics</span>
         </div>
         <div class="d-flex items-center gap-md">
           <span class="badge badge--danger"><i data-lucide="shield-alert" style="width:12px; height:12px;"></i> Admin Mode</span>
+          <button class="btn btn--outline btn--sm" id="btn-refresh-stats">
+            <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> Refresh
+          </button>
           <a href="../dashboard.html" class="btn btn--outline btn--sm">Exit to User App</a>
         </div>
       </header>
@@ -37,129 +40,174 @@
       <main class="app-layout__content">
         <div class="mb-2xl">
           <h1 class="text-3xl font-bold mb-xs">Platform Administration</h1>
-          <p class="text-secondary">Real-time metrics, system health, and user management controls.</p>
+          <p class="text-secondary">Real-time metrics, system health diagnostics, and platform activity.</p>
         </div>
 
         <!-- 4 KPI Cards Grid -->
-        <div class="d-grid grid-cols-4 gap-xl mb-3xl">
+        <div class="d-grid grid-cols-4 gap-xl mb-2xl">
           <div class="admin-metric-card">
-            <div class="d-flex justify-between items-center text-xs text-muted">
+            <div class="d-flex justify-between items-center text-xs text-muted mb-xs">
               <span>Total Registered Users</span>
               <i data-lucide="users" style="color:var(--color-primary-light);"></i>
             </div>
-            <div class="admin-metric__value">1,482</div>
-            <div class="admin-metric__change text-success">
-              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> +18% this month
-            </div>
+            <div class="admin-metric__value" id="metric-total-users">--</div>
+            <div class="text-xs text-muted mt-2xs" id="metric-users-breakdown">0 Free • 0 Pro</div>
           </div>
 
           <div class="admin-metric-card">
-            <div class="d-flex justify-between items-center text-xs text-muted">
-              <span>Resumes Analyzed</span>
+            <div class="d-flex justify-between items-center text-xs text-muted mb-xs">
+              <span>Resumes Uploaded</span>
+              <i data-lucide="file-text" style="color:var(--color-accent-light);"></i>
+            </div>
+            <div class="admin-metric__value" id="metric-total-resumes">--</div>
+            <div class="text-xs text-muted mt-2xs" id="metric-resumes-parsed">0 parsed with text</div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="d-flex justify-between items-center text-xs text-muted mb-xs">
+              <span>ATS Analyses Executed</span>
               <i data-lucide="file-check-2" style="color:var(--color-success);"></i>
             </div>
-            <div class="admin-metric__value">4,891</div>
-            <div class="admin-metric__change text-success">
-              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> +24% this month
-            </div>
+            <div class="admin-metric__value" id="metric-total-analyses">--</div>
+            <div class="text-xs text-success mt-2xs">Scored &amp; Quota Checked</div>
           </div>
 
           <div class="admin-metric-card">
-            <div class="d-flex justify-between items-center text-xs text-muted">
-              <span>Premium Subscribers</span>
-              <i data-lucide="sparkles" style="color:var(--color-warning);"></i>
+            <div class="d-flex justify-between items-center text-xs text-muted mb-xs">
+              <span>Active Job Listings</span>
+              <i data-lucide="briefcase" style="color:var(--color-warning);"></i>
             </div>
-            <div class="admin-metric__value">312</div>
-            <div class="admin-metric__change text-success">
-              <i data-lucide="trending-up" style="width:14px; height:14px;"></i> 21.0% conversion
-            </div>
-          </div>
-
-          <div class="admin-metric-card">
-            <div class="d-flex justify-between items-center text-xs text-muted">
-              <span>Test Revenue (Razorpay)</span>
-              <i data-lucide="indian-rupee" style="color:var(--color-accent-emerald);"></i>
-            </div>
-            <div class="admin-metric__value">₹1.55L</div>
-            <div class="admin-metric__change text-muted">
-              Sandbox Test Mode
-            </div>
+            <div class="admin-metric__value" id="metric-active-jobs">--</div>
+            <div class="text-xs text-muted mt-2xs" id="metric-total-apps">0 applications logged</div>
           </div>
         </div>
 
-        <!-- System Status & Recent Activity Grid -->
-        <div class="d-grid grid-cols-3 gap-2xl">
+        <!-- 2 Column Layout: System Health & Application Pipeline Breakdown -->
+        <div class="d-grid grid-cols-2 gap-2xl mb-2xl">
           
-          <!-- System Status Card -->
+          <!-- System Diagnostics Card -->
           <div class="card p-xl">
-            <h3 class="text-base font-bold mb-lg">Platform Microservices Health</h3>
+            <div class="card__header mb-lg">
+              <div class="d-flex items-center gap-xs">
+                <i data-lucide="activity" style="color: var(--color-primary-light);"></i>
+                <h2 class="card__title">System Health Diagnostics</h2>
+              </div>
+              <span class="badge badge--success font-bold" id="health-overall-badge">Operational</span>
+            </div>
+
             <div class="d-flex flex-col gap-md">
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div class="d-flex items-center gap-sm">
-                  <span class="status-dot status-dot--active"></span>
-                  <span class="text-sm font-semibold">Express Primary API</span>
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                <div class="d-flex items-center gap-md">
+                  <div class="d-inline-flex p-xs" style="background: rgba(99, 102, 241, 0.1); border-radius: var(--radius-sm); color: var(--color-primary-light);">
+                    <i data-lucide="server" style="width:16px; height:16px;"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-primary">Express API Backend (Node.js)</div>
+                    <div class="text-xs text-muted" id="health-express-details">Port 5001 • Uptime: --</div>
+                  </div>
                 </div>
-                <span class="badge badge--success">Port 5001 • Healthy</span>
+                <span class="badge badge--success" id="health-express-status">Online</span>
               </div>
 
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div class="d-flex items-center gap-sm">
-                  <span class="status-dot status-dot--active"></span>
-                  <span class="text-sm font-semibold">FastAPI Python Sidecar</span>
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                <div class="d-flex items-center gap-md">
+                  <div class="d-inline-flex p-xs" style="background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-sm); color: var(--color-success);">
+                    <i data-lucide="database" style="width:16px; height:16px;"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-primary">MongoDB Atlas Cluster</div>
+                    <div class="text-xs text-muted" id="health-mongo-details">ReplicaSet • Status: Connected</div>
+                  </div>
                 </div>
-                <span class="badge badge--success">Port 8000 • Healthy</span>
+                <span class="badge badge--success" id="health-mongo-status">Connected</span>
               </div>
 
-              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md);">
-                <div class="d-flex items-center gap-sm">
-                  <span class="status-dot status-dot--active"></span>
-                  <span class="text-sm font-semibold">Gemini AI Model</span>
+              <div class="p-md d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                <div class="d-flex items-center gap-md">
+                  <div class="d-inline-flex p-xs" style="background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-sm); color: var(--color-warning);">
+                    <i data-lucide="cpu" style="width:16px; height:16px;"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold text-primary">FastAPI AI Microservice (Python)</div>
+                    <div class="text-xs text-muted" id="health-fastapi-details">Port 8000 • PyMuPDF &amp; Gemini Bridge</div>
+                  </div>
                 </div>
-                <span class="badge badge--primary">Selected in Phase 9</span>
+                <span class="badge badge--success" id="health-fastapi-status">Active</span>
               </div>
             </div>
           </div>
 
-          <!-- Recent Analyses Feed -->
-          <div class="card p-xl" style="grid-column: span 2;">
-            <div class="card__header">
-              <h3 class="text-base font-bold">Recent System Activity</h3>
-              <span class="badge badge--primary">Live Feed</span>
+          <!-- Application Stages Funnel -->
+          <div class="card p-xl">
+            <div class="card__header mb-lg">
+              <div class="d-flex items-center gap-xs">
+                <i data-lucide="layers" style="color: var(--color-accent-light);"></i>
+                <h2 class="card__title">Candidate Application Pipeline</h2>
+              </div>
+              <span class="badge badge--primary" id="health-apps-total-badge">0 Submissions</span>
             </div>
 
             <div class="d-flex flex-col gap-sm">
-              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
-                <div class="d-flex items-center gap-sm text-xs">
-                  <i data-lucide="file-text" style="color:var(--color-primary-light); width:14px; height:14px;"></i>
-                  <span>Resume analysis completed for <strong>priya.dev@example.com</strong></span>
-                </div>
-                <span class="badge badge--success font-mono">92/100</span>
+              <div class="d-flex justify-between items-center text-xs p-xs">
+                <span class="text-secondary d-flex items-center gap-xs"><i data-lucide="send" style="width:14px;height:14px;color:var(--color-info);"></i> Applied</span>
+                <span class="font-bold text-info" id="stage-applied-count">0</span>
               </div>
+              <div class="progress-bar mb-xs"><div class="progress-bar__fill" id="stage-applied-bar" style="width: 0%; background: var(--color-info);"></div></div>
 
-              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
-                <div class="d-flex items-center gap-sm text-xs">
-                  <i data-lucide="user-plus" style="color:var(--color-success); width:14px; height:14px;"></i>
-                  <span>New user registered: <strong>rahul.sharma@example.com</strong></span>
-                </div>
-                <span class="text-xs text-muted">2 mins ago</span>
+              <div class="d-flex justify-between items-center text-xs p-xs">
+                <span class="text-secondary d-flex items-center gap-xs"><i data-lucide="calendar" style="width:14px;height:14px;color:var(--color-warning);"></i> In Interview Rounds</span>
+                <span class="font-bold text-warning" id="stage-interview-count">0</span>
               </div>
+              <div class="progress-bar mb-xs"><div class="progress-bar__fill" id="stage-interview-bar" style="width: 0%; background: var(--color-warning);"></div></div>
 
-              <div class="p-sm d-flex justify-between items-center" style="background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);">
-                <div class="d-flex items-center gap-sm text-xs">
-                  <i data-lucide="sparkles" style="color:var(--color-warning); width:14px; height:14px;"></i>
-                  <span>User upgraded to Premium Plan: <strong>amit.kumar@example.com</strong></span>
-                </div>
-                <span class="badge badge--gradient">₹499 Paid</span>
+              <div class="d-flex justify-between items-center text-xs p-xs">
+                <span class="text-secondary d-flex items-center gap-xs"><i data-lucide="award" style="width:14px;height:14px;color:var(--color-success);"></i> Offers Extended</span>
+                <span class="font-bold text-success" id="stage-offered-count">0</span>
               </div>
+              <div class="progress-bar mb-xs"><div class="progress-bar__fill" id="stage-offered-bar" style="width: 0%; background: var(--color-success);"></div></div>
+
+              <div class="d-flex justify-between items-center text-xs p-xs">
+                <span class="text-secondary d-flex items-center gap-xs"><i data-lucide="archive" style="width:14px;height:14px;color:var(--color-secondary);"></i> Terminal / Archived</span>
+                <span class="font-bold text-secondary" id="stage-terminal-count">0</span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar__fill" id="stage-terminal-bar" style="width: 0%; background: var(--color-secondary);"></div></div>
             </div>
           </div>
 
         </div>
+
+        <!-- Recent Platform Activity Feed -->
+        <div class="card p-xl">
+          <div class="card__header mb-md">
+            <h2 class="card__title">Recent Platform Activity</h2>
+            <a href="users.html" class="btn btn--outline btn--sm">View All Users &rarr;</a>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Activity Type</th>
+                  <th>Candidate / User</th>
+                  <th>Details</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="admin-recent-activity-body">
+                <tr>
+                  <td colspan="4" class="text-center text-xs text-muted py-md">Loading platform activity...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
 
   <script src="../../js/utils/constants.js"></script>
   <script type="module" src="../../js/app.js"></script>
+  <script type="module" src="../../js/pages/admin-dashboard.js"></script>
 </body>
 </html>

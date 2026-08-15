@@ -28,111 +28,122 @@
           <span class="text-sm text-secondary">Admin Portal /</span>
           <span class="text-sm font-semibold text-primary">User Accounts</span>
         </div>
+        <div class="d-flex items-center gap-md">
+          <span class="badge badge--danger"><i data-lucide="shield-alert" style="width:12px; height:12px;"></i> Admin Mode</span>
+          <a href="../dashboard.html" class="btn btn--outline btn--sm">Exit to User App</a>
+        </div>
       </header>
 
       <main class="app-layout__content">
         <div class="d-flex justify-between items-center mb-2xl">
           <div>
             <h1 class="text-3xl font-bold mb-xs">User Management</h1>
-            <p class="text-secondary">View, manage roles, and review subscription statuses for all registered users.</p>
+            <p class="text-secondary" id="admin-users-count-subtitle">View, manage roles, and review subscription statuses for all registered users.</p>
           </div>
         </div>
 
         <!-- Search & Filter Controls -->
         <div class="card p-md mb-2xl">
           <div class="d-grid grid-cols-3 gap-md items-center">
-            <input type="text" class="form-input" placeholder="Search by name or email...">
-            <select class="form-select">
+            <input type="text" class="form-input" id="admin-user-search" placeholder="Search by name or email...">
+            <select class="form-select" id="admin-user-plan-filter">
               <option value="">All Subscription Plans</option>
-              <option value="free">Free Tier</option>
+              <option value="free">Free Plan</option>
               <option value="premium">Premium Pro</option>
             </select>
-            <select class="form-select">
+            <select class="form-select" id="admin-user-role-filter">
               <option value="">All Roles</option>
-              <option value="user">User</option>
+              <option value="user">Candidate / User</option>
               <option value="admin">Platform Admin</option>
             </select>
           </div>
         </div>
 
         <!-- Users Data Table -->
-        <div class="table-wrapper">
+        <div class="table-wrapper mb-2xl">
           <table class="table">
             <thead>
               <tr>
-                <th>User</th>
+                <th>User Profile</th>
                 <th>Role</th>
-                <th>Plan Tier</th>
-                <th>Analyses Run</th>
+                <th>Plan &amp; Quota</th>
+                <th>Activity</th>
                 <th>Joined</th>
-                <th style="text-align: right;">Actions</th>
+                <th class="text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="admin-users-table-body">
               <tr>
-                <td>
-                  <div class="d-flex items-center gap-sm">
-                    <div class="sidebar__avatar" style="width: 2rem; height: 2rem; font-size: 0.75rem;">JD</div>
-                    <div>
-                      <div class="font-semibold text-primary">John Doe</div>
-                      <div class="text-xs text-muted font-mono">user@example.com</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge badge--secondary">User</span></td>
-                <td><span class="badge badge--primary">Free</span></td>
-                <td class="font-mono text-xs">1 / 3 used</td>
-                <td class="text-xs text-muted">Aug 12, 2026</td>
-                <td style="text-align: right;">
-                  <button class="btn btn--outline btn--sm" onclick="showToast('User edit modal will be connected in Phase 16', 'info')">Manage</button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>
-                  <div class="d-flex items-center gap-sm">
-                    <div class="sidebar__avatar" style="width: 2rem; height: 2rem; font-size: 0.75rem; background: var(--gradient-accent);">AD</div>
-                    <div>
-                      <div class="font-semibold text-primary">Admin User</div>
-                      <div class="text-xs text-muted font-mono">admin@example.com</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge badge--danger">Admin</span></td>
-                <td><span class="badge badge--gradient">Unlimited</span></td>
-                <td class="font-mono text-xs">48 used</td>
-                <td class="text-xs text-muted">Aug 01, 2026</td>
-                <td style="text-align: right;">
-                  <button class="btn btn--outline btn--sm" disabled>Superadmin</button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>
-                  <div class="d-flex items-center gap-sm">
-                    <div class="sidebar__avatar" style="width: 2rem; height: 2rem; font-size: 0.75rem; background: var(--gradient-score);">PS</div>
-                    <div>
-                      <div class="font-semibold text-primary">Priya Sharma</div>
-                      <div class="text-xs text-muted font-mono">priya.dev@example.com</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="badge badge--secondary">User</span></td>
-                <td><span class="badge badge--gradient">Premium</span></td>
-                <td class="font-mono text-xs">14 used</td>
-                <td class="text-xs text-muted">Aug 08, 2026</td>
-                <td style="text-align: right;">
-                  <button class="btn btn--outline btn--sm" onclick="showToast('User edit modal will be connected in Phase 16', 'info')">Manage</button>
+                <td colspan="6" class="text-center text-xs text-muted py-xl">
+                  <div class="spinner spinner--md mb-sm" style="margin:0 auto;"></div>
+                  Loading registered platform users...
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination -->
+        <div id="admin-users-pagination" class="d-none"></div>
+
       </main>
+    </div>
+  </div>
+
+  <!-- Edit User Role & Plan Modal -->
+  <div class="modal d-none" id="modal-edit-user">
+    <div class="modal__overlay" id="modal-edit-overlay"></div>
+    <div class="modal__dialog" style="max-width: 480px;">
+      <div class="modal__header">
+        <h3 class="text-lg font-bold">Edit User Account</h3>
+        <button class="btn btn--ghost btn--sm" id="btn-close-edit-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal__body">
+        <form id="form-edit-user">
+          <input type="hidden" id="modal-edit-user-id">
+          
+          <div class="form-group mb-md">
+            <label class="form-label">User Email</label>
+            <input type="text" class="form-input" id="modal-edit-user-email" disabled style="opacity: 0.7;">
+          </div>
+
+          <div class="form-group mb-md">
+            <label class="form-label">Platform Role</label>
+            <select class="form-select" id="modal-edit-user-role" required>
+              <option value="user">Candidate / Standard User</option>
+              <option value="admin">Platform Administrator</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-md">
+            <label class="form-label">Subscription Tier</label>
+            <select class="form-select" id="modal-edit-user-plan" required>
+              <option value="free">Free Tier (3 analyses/month)</option>
+              <option value="premium">Premium Pro (Unlimited)</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-lg">
+            <label class="form-label">Analysis Quota Limit (Monthly)</label>
+            <input type="number" class="form-input" id="modal-edit-user-limit" min="0" max="999999" placeholder="e.g. 3">
+          </div>
+
+          <div class="d-flex justify-between items-center pt-md" style="border-top: 1px solid var(--color-border);">
+            <button type="button" class="btn btn--ghost text-danger btn--sm" id="btn-modal-delete-user">
+              <i data-lucide="trash-2"></i> Delete User
+            </button>
+            <div class="d-flex gap-xs">
+              <button type="button" class="btn btn--outline btn--sm" id="btn-cancel-edit-modal">Cancel</button>
+              <button type="submit" class="btn btn--primary btn--sm" id="btn-save-edit-user">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <script src="../../js/utils/constants.js"></script>
   <script type="module" src="../../js/app.js"></script>
+  <script type="module" src="../../js/pages/admin-users.js"></script>
 </body>
 </html>
