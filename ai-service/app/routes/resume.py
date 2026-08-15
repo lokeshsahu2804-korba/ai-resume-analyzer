@@ -1,21 +1,23 @@
 """
-FastAPI Resume Processing Router (app/routes/resume.py)
-Protected internal endpoint for PDF text extraction and structured parsing.
+FastAPI Resume Processing & AI Analysis Router (app/routes/resume.py)
+Protected internal endpoints for PDF text extraction and Gemini AI ATS scoring.
 """
 
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.middleware.auth import verify_internal_api_key
 from app.schemas.resume import ProcessResumeRequest, ProcessResumeResponse
+from app.schemas.analysis import AnalyzeResumeRequest, AnalyzeResumeResponse
 from app.services.pdf_extractor import download_or_read_pdf, extract_text_from_pdf_bytes
 from app.services.resume_parser import parse_resume_content
+from app.services.ai_analyzer import analyze_resume_content
 from app.utils.text_cleaner import clean_text, calculate_text_stats
 
 logger = logging.getLogger("fastapi_resume_processor")
 
 router = APIRouter(
     prefix="/api",
-    tags=["Resume Processing"],
+    tags=["Resume Processing & Analysis"],
     dependencies=[Depends(verify_internal_api_key)]
 )
 
@@ -69,3 +71,25 @@ async def process_resume(payload: ProcessResumeRequest):
         wordCount=stats["wordCount"],
         characterCount=stats["characterCount"]
     )
+
+
+@router.post(
+    "/analyze-resume",
+    response_model=AnalyzeResumeResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Generate AI ATS score breakdown, strengths, weaknesses, and improvement suggestions"
+)
+async def analyze_resume(payload: AnalyzeResumeRequest):
+    """
+    Executes Google Gemini AI and ATS scoring engine on extracted resume text and optional job description.
+    """
+    logger.info(f"Initiating AI resume analysis for resumeId={payload.resumeId}")
+
+    if not payload.extractedText or not payload.extractedText.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Resume text cannot be empty for AI analysis"
+        )
+
+    result = await analyze_resume_content(payload)
+    return result
