@@ -62,3 +62,14 @@ export async function getPaymentByIdApi(paymentId) {
     method: 'GET'
   });
 }
+
+/**
+ * Cancels authenticated candidate's active Premium subscription.
+ *
+ * @returns {Promise<any>}
+ */
+export async function cancelSubscriptionApi() {
+  return apiClient('/payments/cancel-subscription', {
+    method: 'POST'
+  });
+}
