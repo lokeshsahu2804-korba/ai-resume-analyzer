@@ -46,6 +46,18 @@ export async function uploadResumeApi(formData) {
 }
 
 /**
+ * Triggers or re-runs FastAPI text extraction and structured parsing for a resume.
+ *
+ * @param {string} resumeId
+ * @returns {Promise<any>}
+ */
+export async function processResumeApi(resumeId) {
+  return apiClient(`/resumes/${resumeId}/process`, {
+    method: 'POST'
+  });
+}
+
+/**
  * Lists user resumes with pagination.
  *
  * @param {number} [page=1]

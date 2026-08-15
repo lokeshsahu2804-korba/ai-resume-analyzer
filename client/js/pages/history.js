@@ -1,10 +1,10 @@
 /**
  * Resume Analysis History Page Controller (pages/history.js)
- * Fetches user's uploaded resumes and renders table with live delete action.
+ * Fetches user's uploaded resumes, displays parsing status, and allows manual parse trigger & delete.
  */
 
 import { authService } from '../services/auth.service.js';
-import { getResumesApi, deleteResumeApi } from '../api/resume.api.js';
+import { getResumesApi, deleteResumeApi, processResumeApi } from '../api/resume.api.js';
 import { showToast } from '../components/toast.js';
 import { renderIcons } from '../utils/dom.js';
 
@@ -47,10 +47,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 })
               : 'Recent';
 
-            const statusBadge =
+            const status = r.status || 'uploaded';
+            let statusBadge = '';
+            let parseActionBtn = '';
+
+            if (status === 'parsed') {
+              const skillsCount = r.parsed?.skills?.length || 0;
+              statusBadge = `<span class="badge badge--success font-mono font-bold"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> PARSED (${skillsCount} skills)</span>`;
+            } else if (status === 'processing') {
+              statusBadge = `<span class="badge badge--warning font-mono font-bold"><span class="spinner spinner--sm" style="width:12px;height:12px;"></span> PROCESSING</span>`;
+            } else if (status === 'failed') {
+              statusBadge = `<span class="badge badge--danger font-mono font-bold">PARSE FAILED</span>`;
+              parseActionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Retry Parse</button>`;
+            } else {
+              statusBadge = `<span class="badge badge--secondary font-mono font-bold">UPLOADED</span>`;
+              parseActionBtn = `<button class="btn btn--outline btn--sm btn-process-resume mr-xs" data-id="${r._id}"><i data-lucide="cpu" style="width:12px;height:12px;"></i> Parse Text</button>`;
+            }
+
+            const activeBadge =
               index === 0
                 ? '<span class="badge badge--primary">Active</span>'
-                : '<span class="badge badge--secondary">Archived</span>';
+                : '';
 
             const resolvedUrl = fileUrl.startsWith('http')
               ? fileUrl
@@ -62,23 +79,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <div class="d-flex items-center gap-sm">
                     <i data-lucide="file-text" style="color: var(--color-primary-light);"></i>
                     <span class="font-semibold text-primary">${fileName}</span>
-                    ${statusBadge}
+                    ${activeBadge}
                   </div>
                 </td>
-                <td>
-                  <span class="badge badge--success font-mono font-bold">${r.status.toUpperCase()}</span>
-                </td>
+                <td>${statusBadge}</td>
                 <td class="text-secondary">${sizeMb}</td>
                 <td class="text-muted">${dateStr}</td>
                 <td>
                   <a href="${resolvedUrl}" target="_blank" rel="noopener" class="btn btn--ghost btn--sm">
-                    <i data-lucide="external-link" style="width:14px; height:14px;"></i> View File
+                    <i data-lucide="external-link" style="width:14px; height:14px;"></i> View PDF
                   </a>
                 </td>
                 <td style="text-align: right;">
-                  <button class="btn btn--ghost btn--sm btn-delete-resume" data-id="${r._id}" style="color: var(--color-danger);" title="Delete Resume">
-                    <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
-                  </button>
+                  <div class="d-flex items-center justify-end gap-xs">
+                    ${parseActionBtn}
+                    <button class="btn btn--ghost btn--sm btn-delete-resume" data-id="${r._id}" style="color: var(--color-danger);" title="Delete Resume">
+                      <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             `;
@@ -86,6 +104,28 @@ document.addEventListener('DOMContentLoaded', async () => {
           .join('');
 
         renderIcons();
+
+        // Attach parse event listeners
+        document.querySelectorAll('.btn-process-resume').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            const resumeId = btn.getAttribute('data-id');
+            if (!resumeId) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner spinner--sm" style="width:12px;height:12px;"></span> Parsing...';
+
+            try {
+              await processResumeApi(resumeId);
+              showToast('Resume parsed successfully!', 'success');
+              await loadResumes();
+            } catch (err) {
+              showToast(err.message || 'Failed to parse resume', 'error');
+              btn.disabled = false;
+              btn.innerHTML = '<i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Retry';
+              renderIcons();
+            }
+          });
+        });
 
         // Attach delete event listeners
         document.querySelectorAll('.btn-delete-resume').forEach((btn) => {

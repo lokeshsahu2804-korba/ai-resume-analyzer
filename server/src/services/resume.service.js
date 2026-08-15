@@ -1,92 +1,135 @@
 /**
- * Resume Business Logic Service (services/resume.service.js)
- * Handles PDF storage, database persistence, listing, details retrieval, and deletion.
+ * Resume Service (services/resume.service.js)
+ * Manages resume document creation, retrieval, deletion, and FastAPI text extraction.
  */
 
-const mongoose = require('mongoose');
 const Resume = require('../models/Resume');
-const { uploadFile, deleteFile } = require('../config/cloudinary');
 const ApiError = require('../utils/ApiError');
+const logger = require('../utils/logger');
+const { deleteFile } = require('../config/cloudinary');
+const { extractAndParseResume } = require('./fastapi.service');
 
 /**
- * Uploads a resume PDF to Cloudinary/local storage and persists metadata in MongoDB.
- * Note: Does NOT consume AI analysis quota here (quota is consumed during Phase 9 AI analysis).
+ * Creates a new Resume document from uploaded file metadata.
+ * Note: Quota (resumeAnalysesUsed) is preserved and only consumed during Phase 9 AI analysis.
  *
- * @param {string} userId - Authenticated user ID
- * @param {Buffer} fileBuffer - PDF file buffer
- * @param {Object} fileInfo - Multer file object ({ originalname, mimetype, size })
- * @returns {Promise<Object>} Created Resume document
+ * @param {string} userId - ID of authenticated user
+ * @param {Object} uploadResult - { fileUrl, cloudinaryPublicId, publicId, originalName, fileSize, mimeType }
+ * @returns {Promise<Document>}
  */
-const uploadResume = async (userId, fileBuffer, fileInfo) => {
-  // 1. Upload to cloud or local storage
-  const storageResult = await uploadFile(fileBuffer, {
-    originalName: fileInfo.originalname,
-    mimeType: fileInfo.mimetype,
-    userId
-  });
-
-  // 2. Persist resume document in MongoDB
-  const resume = new Resume({
-    userId,
+const createResumeRecord = async (userId, uploadResult) => {
+  const resume = await Resume.create({
+    userId: userId,
     file: {
-      originalName: fileInfo.originalname,
-      fileUrl: storageResult.fileUrl,
-      cloudinaryPublicId: storageResult.cloudinaryPublicId,
-      fileSize: fileInfo.size,
-      mimeType: fileInfo.mimetype,
+      originalName: uploadResult.originalName,
+      fileUrl: uploadResult.fileUrl,
+      cloudinaryPublicId: uploadResult.cloudinaryPublicId || uploadResult.publicId || '',
+      fileSize: uploadResult.fileSize,
+      mimeType: uploadResult.mimeType || 'application/pdf',
       uploadedAt: new Date()
     },
-    status: 'uploaded',
-    isActive: true
+    status: 'uploaded'
   });
 
-  await resume.save();
   return resume;
 };
 
 /**
- * Retrieves a paginated list of active resumes for the authenticated user.
+ * Triggers FastAPI text extraction and structured parsing for a specific resume.
  *
- * @param {string} userId - User ID
- * @param {Object} query - { page, limit }
- * @returns {Promise<{ resumes: Array, pagination: Object }>}
+ * @param {string} resumeId
+ * @param {string} userId
+ * @returns {Promise<Document>}
  */
-const listResumes = async (userId, { page = 1, limit = 10 }) => {
-  const pageNum = Math.max(1, parseInt(page, 10) || 1);
-  const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
-  const skip = (pageNum - 1) * limitNum;
+const processResumeById = async (resumeId, userId) => {
+  const resume = await Resume.findOne({ _id: resumeId, userId: userId });
 
-  const query = { userId, isActive: true };
+  if (!resume) {
+    throw ApiError.notFound('Resume document not found or access denied');
+  }
+
+  // Update status to processing
+  resume.status = 'processing';
+  await resume.save();
+
+  try {
+    const result = await extractAndParseResume({
+      fileUrl: resume.file.fileUrl,
+      resumeId: resume._id,
+      originalName: resume.file.originalName
+    });
+
+    // Update with extracted and parsed data
+    resume.extractedText = result.extractedText;
+    resume.parsed = result.parsed;
+    resume.status = 'parsed';
+
+    await resume.save();
+    logger.info(`Resume ${resume._id} successfully parsed: ${result.parsed.skills?.length || 0} skills found`);
+
+    return resume;
+  } catch (err) {
+    logger.error(`Failed to process resume ${resume._id}: ${err.message}`);
+    resume.status = 'failed';
+    await resume.save().catch(() => {});
+    throw err;
+  }
+};
+
+/**
+ * Safely triggers background FastAPI processing without blocking upload responses.
+ *
+ * @param {string} resumeId
+ * @param {string} userId
+ */
+const triggerBackgroundResumeProcessing = (resumeId, userId) => {
+  setImmediate(async () => {
+    try {
+      await processResumeById(resumeId, userId);
+    } catch (err) {
+      logger.warn(`Background resume processing error for ${resumeId}: ${err.message}`);
+    }
+  });
+};
+
+/**
+ * Retrieves paginated resumes for the authenticated user.
+ *
+ * @param {string} userId
+ * @param {number} [page=1]
+ * @param {number} [limit=10]
+ * @returns {Promise<{ resumes: Array, total: number, page: number, pages: number }>}
+ */
+const getUserResumes = async (userId, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
 
   const [resumes, total] = await Promise.all([
-    Resume.find(query).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
-    Resume.countDocuments(query)
+    Resume.find({ userId: userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Resume.countDocuments({ userId: userId })
   ]);
 
   return {
     resumes,
-    pagination: {
-      total,
-      page: pageNum,
-      limit: limitNum,
-      totalPages: Math.ceil(total / limitNum) || 1
-    }
+    total,
+    page: Number(page),
+    pages: Math.ceil(total / limit)
   };
 };
 
 /**
- * Retrieves a single resume by ID with strict user ownership enforcement.
+ * Retrieves a single resume by ID for the authenticated user.
  *
- * @param {string} userId - User ID
- * @param {string} resumeId - Resume ObjectId
- * @returns {Promise<Object>} Resume document
+ * @param {string} resumeId
+ * @param {string} userId
+ * @returns {Promise<Document>}
  */
-const getResumeById = async (userId, resumeId) => {
-  if (!mongoose.Types.ObjectId.isValid(resumeId)) {
-    throw ApiError.notFound('Resume document not found');
-  }
+const getResumeById = async (resumeId, userId) => {
+  const resume = await Resume.findOne({ _id: resumeId, userId: userId });
 
-  const resume = await Resume.findOne({ _id: resumeId, userId, isActive: true });
   if (!resume) {
     throw ApiError.notFound('Resume document not found');
   }
@@ -95,34 +138,38 @@ const getResumeById = async (userId, resumeId) => {
 };
 
 /**
- * Deletes a resume document from MongoDB and deletes the physical file from Cloudinary/disk.
+ * Deletes a resume document and cleans up cloud/local storage.
  *
- * @param {string} userId - User ID
- * @param {string} resumeId - Resume ObjectId
- * @returns {Promise<void>}
+ * @param {string} resumeId
+ * @param {string} userId
+ * @returns {Promise<Document>}
  */
-const deleteResume = async (userId, resumeId) => {
-  if (!mongoose.Types.ObjectId.isValid(resumeId)) {
-    throw ApiError.notFound('Resume document not found');
-  }
+const deleteResumeById = async (resumeId, userId) => {
+  const resume = await Resume.findOne({ _id: resumeId, userId: userId });
 
-  const resume = await Resume.findOne({ _id: resumeId, userId });
   if (!resume) {
     throw ApiError.notFound('Resume document not found');
   }
 
-  // 1. Delete stored file from Cloudinary or local disk
-  if (resume.file) {
-    await deleteFile(resume.file);
+  // Clean up physical file storage (Cloudinary or local disk)
+  try {
+    await deleteFile({
+      fileUrl: resume.file?.fileUrl,
+      cloudinaryPublicId: resume.file?.cloudinaryPublicId
+    });
+  } catch (storageErr) {
+    logger.warn(`Failed to delete storage file for resume ${resumeId}: ${storageErr.message}`);
   }
 
-  // 2. Remove document from MongoDB Atlas
-  await Resume.findByIdAndDelete(resumeId);
+  await Resume.deleteOne({ _id: resumeId, userId: userId });
+  return resume;
 };
 
 module.exports = {
-  uploadResume,
-  listResumes,
+  createResumeRecord,
+  processResumeById,
+  triggerBackgroundResumeProcessing,
+  getUserResumes,
   getResumeById,
-  deleteResume
+  deleteResumeById
 };
