@@ -27,6 +27,7 @@
     "mongoose": "^9.9.2",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
+    "razorpay": "^2.9.8",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
   },

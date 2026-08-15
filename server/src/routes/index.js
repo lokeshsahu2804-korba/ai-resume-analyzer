@@ -15,6 +15,7 @@ const jobRoutes = require('./job.routes');
 const applicationRoutes = require('./application.routes');
 const adminRoutes = require('./admin.routes');
 const notificationRoutes = require('./notification.routes');
+const paymentRoutes = require('./payment.routes');
 
 // Route Registrations
 router.use('/health', healthRoutes);
@@ -26,5 +27,6 @@ router.use('/jobs', jobRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/admin', adminRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/payments', paymentRoutes);
 
 module.exports = router;

@@ -18,6 +18,13 @@ const NOTIFICATION_TYPES = [
   'quota_warning',
   'job_match',
   'plan_updated',
+  'payment_success',
+  'payment_failed',
+  'subscription_activated',
+  'subscription_renewed',
+  'subscription_expired',
+  'subscription_cancelled',
+  'refund_processed',
   'system'
 ];
 

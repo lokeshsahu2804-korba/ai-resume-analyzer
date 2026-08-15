@@ -43,8 +43,15 @@ app.use(
 // Apply rate limiting to all /api requests
 app.use('/api', apiLimiter);
 
-// Body Parsers
-app.use(express.json({ limit: '10mb' }));
+// Body Parsers (with rawBody capture for webhook HMAC signature verification)
+app.use(
+  express.json({
+    limit: '10mb',
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    }
+  })
+);
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Cookie Parser (for JWT session cookies)

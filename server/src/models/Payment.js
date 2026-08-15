@@ -51,6 +51,15 @@ const paymentSchema = new mongoose.Schema(
     webhookVerified: {
       type: Boolean,
       default: false
+    },
+    receipt: {
+      type: String,
+      default: null,
+      trim: true
+    },
+    errorDetails: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null
     }
   },
   {
