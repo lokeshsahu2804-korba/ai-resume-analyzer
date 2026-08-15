@@ -39,7 +39,7 @@
         <div class="d-flex justify-between items-center mb-2xl">
           <div>
             <h1 class="text-3xl font-bold mb-xs">Job Postings Database</h1>
-            <p class="text-secondary">Create, update, or archive job postings used by the AI Semantic Matcher engine.</p>
+            <p class="text-secondary">Create, inspect, and delete active enterprise tech job opportunities.</p>
           </div>
         </div>
 
@@ -56,64 +56,15 @@
                 <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="font-semibold text-primary">Lead Full Stack Engineer</div>
-                  <div class="text-xs text-muted">Stripe</div>
-                </td>
-                <td><span class="badge badge--primary">Senior (5+ yrs)</span></td>
-                <td class="text-secondary">Remote (India)</td>
-                <td class="font-mono text-xs text-success">₹35L – ₹45L</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td style="text-align: right;">
-                  <div class="d-flex justify-end gap-xs">
-                    <button class="btn btn--outline btn--sm" onclick="showToast('Edit Job modal will be active in Phase 16', 'info')">Edit</button>
-                    <button class="btn btn--ghost btn--sm" style="color:var(--color-danger);"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>
-                  <div class="font-semibold text-primary">Senior Node.js Backend Architect</div>
-                  <div class="text-xs text-muted">Razorpay</div>
-                </td>
-                <td><span class="badge badge--primary">Senior (5+ yrs)</span></td>
-                <td class="text-secondary">Bengaluru (Hybrid)</td>
-                <td class="font-mono text-xs text-success">₹30L – ₹40L</td>
-                <td><span class="badge badge--success">Active</span></td>
-                <td style="text-align: right;">
-                  <div class="d-flex justify-end gap-xs">
-                    <button class="btn btn--outline btn--sm" onclick="showToast('Edit Job modal will be active in Phase 16', 'info')">Edit</button>
-                    <button class="btn btn--ghost btn--sm" style="color:var(--color-danger);"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>
-                  <div class="font-semibold text-primary">AI Full Stack Developer</div>
-                  <div class="text-xs text-muted">Swiggy</div>
-                </td>
-                <td><span class="badge badge--secondary">Mid Level (3+ yrs)</span></td>
-                <td class="text-secondary">Bengaluru</td>
-                <td class="font-mono text-xs text-success">₹28L – ₹36L</td>
-                <td><span class="badge badge--warning">Draft</span></td>
-                <td style="text-align: right;">
-                  <div class="d-flex justify-end gap-xs">
-                    <button class="btn btn--outline btn--sm" onclick="showToast('Edit Job modal will be active in Phase 16', 'info')">Edit</button>
-                    <button class="btn btn--ghost btn--sm" style="color:var(--color-danger);"><i data-lucide="trash-2" style="width:14px; height:14px;"></i></button>
-                  </div>
-                </td>
-              </tr>
+            <tbody id="admin-jobs-table-body">
+              <!-- Dynamically rendered by admin-jobs.js -->
             </tbody>
           </table>
         </div>
 
-        <!-- Create Job Modal Shell (Uses our modal component) -->
+        <!-- Create Job Modal Shell -->
         <div class="modal-backdrop" id="create-job-modal" aria-hidden="true">
-          <div class="modal">
+          <div class="modal" style="max-width: 600px;">
             <div class="modal__header">
               <h3 class="modal__title">Create Job Posting</h3>
               <button class="modal__close" data-modal-close>&times;</button>
@@ -122,27 +73,61 @@
               <form id="create-job-form">
                 <div class="form-group">
                   <label class="form-label" for="job-title">Job Title</label>
-                  <input type="text" id="job-title" class="form-input" placeholder="e.g. Senior Backend Engineer">
+                  <input type="text" id="job-title" class="form-input" placeholder="e.g. Senior Backend Architect" required>
                 </div>
                 <div class="d-grid grid-cols-2 gap-md">
                   <div class="form-group">
                     <label class="form-label" for="company-name">Company Name</label>
-                    <input type="text" id="company-name" class="form-input" placeholder="e.g. Stripe">
+                    <input type="text" id="company-name" class="form-input" placeholder="e.g. Stripe" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="job-location">Location</label>
-                    <input type="text" id="job-location" class="form-input" placeholder="e.g. Remote (India)">
+                    <input type="text" id="job-location" class="form-input" placeholder="e.g. Remote (India)" required>
+                  </div>
+                </div>
+                <div class="d-grid grid-cols-2 gap-md">
+                  <div class="form-group">
+                    <label class="form-label" for="job-type">Employment Type</label>
+                    <select id="job-type" class="form-select">
+                      <option value="full-time" selected>Full Time</option>
+                      <option value="part-time">Part Time</option>
+                      <option value="contract">Contract</option>
+                      <option value="internship">Internship</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="job-exp-level">Experience Level</label>
+                    <select id="job-exp-level" class="form-select">
+                      <option value="entry">Entry Level (0-2 yrs)</option>
+                      <option value="mid" selected>Mid Level (2-4 yrs)</option>
+                      <option value="senior">Senior Level (5+ yrs)</option>
+                      <option value="lead">Lead / Staff</option>
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="required-skills">Required Skills (Comma separated)</label>
-                  <input type="text" id="required-skills" class="form-input" placeholder="Node.js, Express, MongoDB, TypeScript">
+                  <input type="text" id="required-skills" class="form-input" placeholder="Node.js, Express, MongoDB, TypeScript" required>
+                </div>
+                <div class="d-grid grid-cols-2 gap-md">
+                  <div class="form-group">
+                    <label class="form-label" for="job-salary-min">Min Salary (INR / yr)</label>
+                    <input type="number" id="job-salary-min" class="form-input" placeholder="2500000">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="job-salary-max">Max Salary (INR / yr)</label>
+                    <input type="number" id="job-salary-max" class="form-input" placeholder="4000000">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="job-description">Job Description</label>
+                  <textarea id="job-description" class="form-input" rows="3" placeholder="Overview of role, responsibilities, and team scope..."></textarea>
                 </div>
               </form>
             </div>
             <div class="modal__footer">
               <button class="btn btn--secondary" data-modal-close>Cancel</button>
-              <button class="btn btn--primary" onclick="closeModal('create-job-modal'); showToast('Job listing created successfully!', 'success');">Create Job</button>
+              <button class="btn btn--primary" id="btn-save-new-job">Create Job</button>
             </div>
           </div>
         </div>
@@ -153,5 +138,6 @@
 
   <script src="../../js/utils/constants.js"></script>
   <script type="module" src="../../js/app.js"></script>
+  <script type="module" src="../../js/pages/admin-jobs.js"></script>
 </body>
 </html>

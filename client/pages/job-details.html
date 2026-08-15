@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Job Details & Match Breakdown — Lead Full Stack Engineer at Stripe.">
-  <title>Lead Full Stack Engineer — Stripe | ResumeAI</title>
+  <meta name="description" content="View complete job specifications, required technical competencies, compensation, and apply.">
+  <title>Job Details — ResumeAI</title>
   
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="../css/base.css">
@@ -25,14 +25,11 @@
     <div class="app-layout__main">
       <header class="app-layout__topbar">
         <div class="d-flex items-center gap-md">
-          <a href="jobs.html" class="text-xs text-accent">&larr; Back to Matched Jobs</a>
+          <a href="jobs.html" class="btn btn--ghost btn--sm">&larr; Back to Job Listings</a>
         </div>
         <div class="d-flex items-center gap-md">
-          <a href="saved-jobs.html" class="btn btn--outline btn--sm">
-            <i data-lucide="bookmark"></i> Save Job
-          </a>
-          <a href="applications.html" class="btn btn--gradient btn--sm">
-            <i data-lucide="send"></i> Mark as Applied
+          <a href="jobs.html" class="btn btn--outline btn--sm">
+            <i data-lucide="compass"></i> Explore All Roles
           </a>
         </div>
       </header>
@@ -40,73 +37,75 @@
       <main class="app-layout__content">
         <div class="container--narrow">
           
-          <!-- Header Hero -->
-          <div class="card p-2xl mb-2xl">
-            <div class="d-flex justify-between items-start mb-lg">
-              <div class="d-flex items-center gap-lg">
-                <div class="job-card__company-logo" style="width:3.5rem; height:3.5rem; font-size:1.25rem;">ST</div>
-                <div>
-                  <h1 class="text-2xl font-bold">Lead Full Stack Engineer</h1>
-                  <div class="text-sm text-secondary">Stripe • Remote (India) • Full Time</div>
-                </div>
-              </div>
-              <div class="text-right">
-                <span class="badge badge--match" style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">94% Match</span>
-                <div class="text-xs text-muted mt-2xs">High Compatibility</div>
-              </div>
-            </div>
-
-            <div class="d-flex items-center gap-xl text-xs text-muted pt-md" style="border-top: 1px solid var(--color-border);">
-              <span><strong>Salary:</strong> ₹35L – ₹45L / year</span>
-              <span><strong>Experience:</strong> 5+ Years</span>
-              <span><strong>Posted:</strong> 3 days ago</span>
-            </div>
+          <!-- Loading State -->
+          <div class="card p-3xl text-center" id="job-details-loading" style="margin: 40px auto;">
+            <div class="spinner spinner--lg mb-md" style="margin: 0 auto;"></div>
+            <p class="text-secondary text-sm">Loading job specifications...</p>
           </div>
 
-          <!-- Skill Match Analysis -->
-          <div class="card p-xl mb-2xl">
-            <h3 class="text-base font-bold mb-md">Skill Gap &amp; Compatibility Analysis</h3>
-            <div class="d-flex flex-col gap-md">
-              <div>
-                <div class="text-xs font-semibold text-success mb-xs">Matching Skills Detected in Your Resume (6 / 7)</div>
-                <div class="d-flex flex-wrap gap-xs">
-                  <span class="skill-chip skill-chip--matched">&check; Node.js</span>
-                  <span class="skill-chip skill-chip--matched">&check; Express</span>
-                  <span class="skill-chip skill-chip--matched">&check; React</span>
-                  <span class="skill-chip skill-chip--matched">&check; TypeScript</span>
-                  <span class="skill-chip skill-chip--matched">&check; MongoDB</span>
-                  <span class="skill-chip skill-chip--matched">&check; REST APIs</span>
-                </div>
-              </div>
-
-              <div>
-                <div class="text-xs font-semibold text-warning mb-xs">Recommended Skill to Add</div>
-                <div class="d-flex flex-wrap gap-xs">
-                  <span class="skill-chip skill-chip--missing">+ AWS Cloud Infrastructure</span>
-                </div>
-              </div>
+          <!-- Empty State -->
+          <div class="card p-3xl text-center d-none" id="job-details-empty" style="margin: 40px auto;">
+            <div class="d-inline-flex p-xl mb-md" style="background: rgba(239, 68, 68, 0.1); border-radius: 50%; color: var(--color-danger);">
+              <i data-lucide="file-question" style="width: 32px; height: 32px;"></i>
             </div>
+            <h3 class="text-xl font-bold mb-xs">Job Listing Not Found</h3>
+            <p class="text-secondary text-sm mb-lg">This job posting may have expired or been removed by the recruiter.</p>
+            <a href="jobs.html" class="btn btn--primary btn--md">&larr; Return to Jobs Directory</a>
           </div>
 
-          <!-- Job Description Body -->
-          <div class="card p-2xl mb-3xl">
-            <h3 class="text-lg font-bold mb-md">About The Role</h3>
-            <p class="text-sm text-secondary mb-lg">
-              Stripe is looking for a Lead Full Stack Engineer to build and scale next-generation developer billing infrastructure. You will work across the stack to deliver resilient, sub-100ms APIs and intuitive developer dashboards.
-            </p>
+          <!-- Content Wrapper -->
+          <div id="job-details-content" class="d-none">
 
-            <h4 class="text-sm font-bold text-primary mb-sm">Key Responsibilities</h4>
-            <ul class="d-flex flex-col gap-xs text-sm text-secondary mb-lg" style="padding-left: 1.25rem;">
-              <li>Design, implement, and maintain scalable full-stack services using Node.js, TypeScript, and React.</li>
-              <li>Collaborate closely with product managers and security engineers on API design.</li>
-              <li>Optimize MongoDB data models for high-throughput transactional queries.</li>
-            </ul>
+            <!-- Header Hero -->
+            <div class="card p-2xl mb-2xl">
+              <div class="d-flex justify-between items-start mb-lg">
+                <div class="d-flex items-center gap-lg">
+                  <div class="job-card__company-logo" id="job-detail-logo" style="width:3.5rem; height:3.5rem; font-size:1.25rem;">CO</div>
+                  <div>
+                    <h1 class="text-2xl font-bold" id="job-detail-title">Job Title</h1>
+                    <div class="text-sm text-secondary" id="job-detail-company">Company • Location</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="badge badge--primary" id="job-detail-exp-badge" style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">Experience Level</span>
+                </div>
+              </div>
 
-            <div class="d-flex gap-md pt-lg" style="border-top: 1px solid var(--color-border);">
-              <button class="btn btn--gradient btn--lg flex-1" onclick="showToast('Redirecting to Stripe Careers portal...', 'info', 'External Application')">
-                Apply on Company Website <i data-lucide="external-link"></i>
-              </button>
+              <div class="d-flex items-center gap-xl text-xs text-muted pt-md" style="border-top: 1px solid var(--color-border);">
+                <span><strong>Salary:</strong> <span id="job-detail-salary">Competitive</span></span>
+                <span><strong>Experience:</strong> <span id="job-detail-exp">3+ Years</span></span>
+                <span><strong>Posted:</strong> <span id="job-detail-posted">Recent</span></span>
+              </div>
             </div>
+
+            <!-- Required Skills Section -->
+            <div class="card p-xl mb-2xl">
+              <h3 class="text-base font-bold mb-md">Required Technical Skills</h3>
+              <div class="d-flex flex-wrap gap-xs" id="job-detail-skills">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Job Description Body -->
+            <div class="card p-2xl mb-3xl">
+              <h3 class="text-lg font-bold mb-md">About The Role</h3>
+              <p class="text-sm text-secondary mb-xl" id="job-detail-description" style="line-height: 1.7; white-space: pre-line;">
+                Job description content.
+              </p>
+
+              <h4 class="text-sm font-bold text-primary mb-xs">Education &amp; Experience Requirements</h4>
+              <ul class="d-flex flex-col gap-xs text-sm text-secondary mb-xl" style="padding-left: 1.25rem;">
+                <li id="job-detail-education">Bachelor or Master in Computer Science or related degree.</li>
+                <li id="job-detail-experience">Proven hands-on software development experience.</li>
+              </ul>
+
+              <div class="d-flex gap-md pt-lg" style="border-top: 1px solid var(--color-border);">
+                <a href="#" class="btn btn--gradient btn--lg flex-1" id="job-detail-apply-btn">
+                  Apply for Position <i data-lucide="external-link"></i>
+                </a>
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -116,5 +115,6 @@
 
   <script src="../js/utils/constants.js"></script>
   <script type="module" src="../js/app.js"></script>
+  <script type="module" src="../js/pages/job-details.js"></script>
 </body>
 </html>
