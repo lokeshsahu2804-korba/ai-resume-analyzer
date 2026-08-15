@@ -10,6 +10,7 @@ const healthRoutes = require('./health.routes');
 const authRoutes = require('./auth.routes');
 const userRoutes = require('./user.routes');
 const resumeRoutes = require('./resume.routes');
+const analysisRoutes = require('./analysis.routes');
 const jobRoutes = require('./job.routes');
 const adminRoutes = require('./admin.routes');
 
@@ -18,6 +19,7 @@ router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/resumes', resumeRoutes);
+router.use('/analyses', analysisRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/admin', adminRoutes);
 
