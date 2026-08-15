@@ -1,6 +1,6 @@
 /**
  * FastAPI Microservice Communication Bridge (services/fastapi.service.js)
- * Inter-service client sending resume PDF URLs and analysis requests to FastAPI with X-Internal-API-Key authentication.
+ * Inter-service client sending resume PDF URLs, analysis requests, and job matching requests to FastAPI.
  */
 
 const ApiError = require('../utils/ApiError');
@@ -124,7 +124,56 @@ const analyzeResumeWithFastAPI = async ({ resumeId, extractedText, parsed, jobDe
   }
 };
 
+/**
+ * Sends candidate resume profile and target job specifications to FastAPI for hybrid compatibility scoring and AI explanation.
+ *
+ * @param {Object} payload - { jobId, jobTitle, jobCompany, jobDescription, requiredSkills, experienceLevel, location, candidateSkills, candidateExperience, candidateEducation, candidateSummary, candidateLocation, candidateAtsScore, isPremium }
+ * @returns {Promise<Object>}
+ */
+const matchJobWithFastAPI = async (payload) => {
+  if (!INTERNAL_API_KEY) {
+    logger.error('INTERNAL_API_KEY is not configured in server environment');
+    throw ApiError.internal('Internal AI service authentication is not configured');
+  }
+
+  const endpoint = `${FASTAPI_URL}/api/match-job`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Internal-API-Key': INTERNAL_API_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const errorMsg = result?.detail || `FastAPI matching error (HTTP ${response.status})`;
+      logger.warn(`FastAPI match-job failed: ${errorMsg}`);
+
+      if (response.status === 401) {
+        throw ApiError.internal('AI service authentication failed (invalid internal key)');
+      }
+
+      throw ApiError.badRequest(`Failed to evaluate job match: ${errorMsg}`);
+    }
+
+    return result;
+  } catch (err) {
+    if (err instanceof ApiError) throw err;
+
+    logger.error(`Failed to connect to FastAPI at ${FASTAPI_URL}: ${err.message}`);
+    throw ApiError.serviceUnavailable(
+      'AI job matching service is currently unreachable. Please ensure the AI service is running.'
+    );
+  }
+};
+
 module.exports = {
   extractAndParseResume,
-  analyzeResumeWithFastAPI
+  analyzeResumeWithFastAPI,
+  matchJobWithFastAPI
 };
