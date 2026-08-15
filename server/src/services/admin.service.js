@@ -14,7 +14,7 @@ const Notification = require('../models/Notification');
 const Payment = require('../models/Payment');
 const ApiError = require('../utils/ApiError');
 const logger = require('../utils/logger');
-const { deleteFile } = require('../utils/fileUpload.util');
+const { deleteFile } = require('../config/cloudinary');
 
 /**
  * Retrieves aggregate platform statistics from real MongoDB collections.
@@ -356,7 +356,7 @@ const updateUserPlan = async (targetUserId, { plan, resumeAnalysesLimit, resumeA
       user.subscription.status = 'active';
       user.usageLimits.resumeAnalysesLimit = 999999;
     } else {
-      user.subscription.status = 'inactive';
+      user.subscription.status = 'none';
       user.usageLimits.resumeAnalysesLimit = 3;
     }
   }
