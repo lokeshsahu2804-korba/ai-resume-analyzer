@@ -1,6 +1,6 @@
 """
-FastAPI Resume Processing & AI Analysis Router (app/routes/resume.py)
-Protected internal endpoints for PDF text extraction and Gemini AI ATS scoring.
+FastAPI Resume Processing, AI Analysis & Job Matching Router (app/routes/resume.py)
+Protected internal endpoints for PDF text extraction, ATS scoring, and job compatibility matching.
 """
 
 import logging
@@ -8,16 +8,18 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.middleware.auth import verify_internal_api_key
 from app.schemas.resume import ProcessResumeRequest, ProcessResumeResponse
 from app.schemas.analysis import AnalyzeResumeRequest, AnalyzeResumeResponse
+from app.schemas.matching import MatchJobRequest, MatchJobResponse
 from app.services.pdf_extractor import download_or_read_pdf, extract_text_from_pdf_bytes
 from app.services.resume_parser import parse_resume_content
 from app.services.ai_analyzer import analyze_resume_content
+from app.services.job_matcher import match_job_with_gemini
 from app.utils.text_cleaner import clean_text, calculate_text_stats
 
 logger = logging.getLogger("fastapi_resume_processor")
 
 router = APIRouter(
     prefix="/api",
-    tags=["Resume Processing & Analysis"],
+    tags=["Resume Processing & Matching"],
     dependencies=[Depends(verify_internal_api_key)]
 )
 
@@ -92,4 +94,19 @@ async def analyze_resume(payload: AnalyzeResumeRequest):
         )
 
     result = await analyze_resume_content(payload)
+    return result
+
+
+@router.post(
+    "/match-job",
+    response_model=MatchJobResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Compute 6-dimension job compatibility score and AI contextual explanation"
+)
+async def match_job(payload: MatchJobRequest):
+    """
+    Evaluates candidate skills, tenure, title, education, and ATS score against job requirements.
+    """
+    logger.info(f"Initiating job match evaluation for jobId={payload.jobId}")
+    result = await match_job_with_gemini(payload)
     return result
