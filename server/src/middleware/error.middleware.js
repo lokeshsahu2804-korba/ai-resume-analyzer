@@ -9,11 +9,14 @@ const logger = require('../utils/logger');
 const errorHandler = (err, req, res, next) => {
   let error = err;
 
-  // If error is not an instance of ApiError, convert it into an ApiError
-  if (!(error instanceof ApiError)) {
+  // Handle Mongoose duplicate key error (code 11000)
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyValue || {})[0] || 'record';
+    error = ApiError.conflict(`Duplicate ${field} detected. An active record already exists.`);
+  } else if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode || 500;
     const message = error.message || 'Internal Server Error';
-    error = new ApiError(statusCode, message, 'INTERNAL_ERROR', null);
+    error = new ApiError(statusCode, message, error.code || 'INTERNAL_ERROR', error.details || null);
   }
 
   // Log unexpected or server-level errors

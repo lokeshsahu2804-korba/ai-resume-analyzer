@@ -365,6 +365,7 @@ const getJobMatchExplanation = async ({ jobId, userId, resumeId, user }) => {
 
 module.exports = {
   computeDeterministicJobMatch,
+  getUserActiveResume,
   getRecommendedJobs,
   getJobMatch,
   getJobMatchExplanation
