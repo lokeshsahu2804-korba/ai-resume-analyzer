@@ -46,4 +46,9 @@ router.get(
   paymentController.getPaymentById
 );
 
+router.post(
+  '/cancel-subscription',
+  paymentController.cancelSubscription
+);
+
 module.exports = router;

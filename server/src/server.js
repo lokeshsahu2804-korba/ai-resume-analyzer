@@ -9,12 +9,16 @@ const http = require('http');
 const app = require('./app');
 const { connectDB } = require('./config/db');
 const { initSocket } = require('./config/socket');
+const { startSubscriptionScheduler } = require('./services/subscriptionScheduler.service');
 const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 5001;
 
 // Connect to MongoDB Database
 connectDB();
+
+// Initialize Background Subscription Lifecycle Scheduler
+startSubscriptionScheduler();
 
 // Create Node HTTP Server
 const httpServer = http.createServer(app);

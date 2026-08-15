@@ -141,14 +141,25 @@ const verifyPayment = async (userId, { razorpayOrderId, razorpayPaymentId, razor
   payment.razorpaySignature = razorpaySignature;
   await payment.save();
 
-  // 4. Activate 30-Day Premium Subscription on User Record
+  // 4. Activate or Extend 30-Day Premium Subscription on User Record
   const user = await User.findById(userId);
   if (!user) {
     throw ApiError.notFound('User account not found');
   }
 
+  const now = new Date();
   const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-  const currentPeriodEnd = new Date(Date.now() + thirtyDaysInMs);
+
+  // Check if candidate is currently on an active unexpired premium subscription
+  const isRenewal =
+    user.plan === 'premium' &&
+    (user.subscription?.status === 'active' || user.subscription?.status === 'cancelled') &&
+    user.subscription?.currentPeriodEnd &&
+    new Date(user.subscription.currentPeriodEnd) > now;
+
+  // If renewal, extend from existing currentPeriodEnd; otherwise start from now
+  const baseDate = isRenewal ? new Date(user.subscription.currentPeriodEnd) : now;
+  const currentPeriodEnd = new Date(baseDate.getTime() + thirtyDaysInMs);
 
   user.plan = 'premium';
   user.subscription = {
@@ -161,7 +172,7 @@ const verifyPayment = async (userId, { razorpayOrderId, razorpayPaymentId, razor
   user.usageLimits.resumeAnalysesLimit = 999999; // Unlimited quota for Premium Pro
 
   await user.save();
-  logger.info(`User ${userId} successfully upgraded to Premium Pro until ${currentPeriodEnd.toISOString()}`);
+  logger.info(`User ${userId} ${isRenewal ? 'renewed' : 'upgraded'} Premium Pro until ${currentPeriodEnd.toISOString()}`);
 
   // 5. Non-Blocking Event Notifications Dispatch
   notificationService
@@ -179,18 +190,39 @@ const verifyPayment = async (userId, { razorpayOrderId, razorpayPaymentId, razor
     })
     .catch((err) => logger.warn(`Payment success notification error: ${err.message}`));
 
-  notificationService
-    .sendNotification({
-      userId,
-      type: 'subscription_activated',
-      title: 'Premium Pro Activated!',
-      message: 'Enjoy unlimited AI resume analyses, bullet point suggestions, and semantic job matching for 30 days.',
-      data: {
-        currentPeriodEnd,
-        plan: 'premium'
-      }
-    })
-    .catch((err) => logger.warn(`Subscription activation notification error: ${err.message}`));
+  const formattedEnd = currentPeriodEnd.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
+  if (isRenewal) {
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'subscription_renewed',
+        title: 'Premium Pro Subscription Renewed',
+        message: `Your Premium Pro subscription has been extended until ${formattedEnd}.`,
+        data: {
+          currentPeriodEnd,
+          plan: 'premium'
+        }
+      })
+      .catch((err) => logger.warn(`Subscription renewal notification error: ${err.message}`));
+  } else {
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'subscription_activated',
+        title: 'Premium Pro Activated!',
+        message: `Enjoy unlimited AI resume analyses, bullet point suggestions, and semantic job matching until ${formattedEnd}.`,
+        data: {
+          currentPeriodEnd,
+          plan: 'premium'
+        }
+      })
+      .catch((err) => logger.warn(`Subscription activation notification error: ${err.message}`));
+  }
 
   const cleanUser = user.toObject();
   delete cleanUser.password;
@@ -251,16 +283,26 @@ const processWebhook = async (rawBody, signature) => {
           paymentDoc.webhookVerified = true;
           await paymentDoc.save();
 
-          // Upgrade User Subscription
+          // Upgrade / Renew User Subscription
           const user = await User.findById(paymentDoc.userId);
           if (user) {
+            const now = new Date();
             const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            const isRenewal =
+              user.plan === 'premium' &&
+              (user.subscription?.status === 'active' || user.subscription?.status === 'cancelled') &&
+              user.subscription?.currentPeriodEnd &&
+              new Date(user.subscription.currentPeriodEnd) > now;
+
+            const baseDate = isRenewal ? new Date(user.subscription.currentPeriodEnd) : now;
+            const currentPeriodEnd = new Date(baseDate.getTime() + thirtyDaysInMs);
+
             user.plan = 'premium';
             user.subscription = {
               razorpaySubscriptionId: orderId,
               razorpayCustomerId: null,
               status: 'active',
-              currentPeriodEnd: new Date(Date.now() + thirtyDaysInMs),
+              currentPeriodEnd,
               plan: 'premium'
             };
             user.usageLimits.resumeAnalysesLimit = 999999;
@@ -275,6 +317,24 @@ const processWebhook = async (rawBody, signature) => {
                 data: { orderId, paymentId }
               })
               .catch(() => {});
+
+            const formattedEnd = currentPeriodEnd.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            });
+
+            if (isRenewal) {
+              notificationService
+                .sendNotification({
+                  userId: user._id,
+                  type: 'subscription_renewed',
+                  title: 'Premium Pro Subscription Renewed',
+                  message: `Your Premium Pro subscription has been extended until ${formattedEnd}.`,
+                  data: { currentPeriodEnd, plan: 'premium' }
+                })
+                .catch(() => {});
+            }
           }
         }
       }
@@ -401,10 +461,74 @@ const getPaymentById = async (userId, paymentId) => {
   return payment;
 };
 
+/**
+ * Cancels candidate's active Premium subscription (grace period retained until currentPeriodEnd).
+ *
+ * @param {string} userId - Authenticated user identifier
+ * @returns {Promise<{ subscription: Object, user: Object, alreadyCancelled: boolean }>}
+ */
+const cancelSubscription = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw ApiError.notFound('User account not found');
+  }
+
+  // Idempotency: If already cancelled, return existing state
+  if (user.subscription?.status === 'cancelled') {
+    const cleanUser = user.toObject();
+    delete cleanUser.password;
+    return {
+      subscription: user.subscription,
+      user: cleanUser,
+      alreadyCancelled: true
+    };
+  }
+
+  // Verify active subscription
+  if (user.plan !== 'premium' || user.subscription?.status !== 'active') {
+    throw ApiError.badRequest('You do not have an active Premium Pro subscription to cancel');
+  }
+
+  user.subscription.status = 'cancelled';
+  await user.save();
+
+  const formattedEnd = user.subscription.currentPeriodEnd
+    ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      })
+    : 'the end of your billing cycle';
+
+  // Non-blocking cancellation notification dispatch
+  notificationService
+    .sendNotification({
+      userId,
+      type: 'subscription_cancelled',
+      title: 'Subscription Cancellation Confirmed',
+      message: `Your subscription cancellation is confirmed. You will retain full Premium Pro access until ${formattedEnd}.`,
+      data: {
+        currentPeriodEnd: user.subscription.currentPeriodEnd,
+        status: 'cancelled'
+      }
+    })
+    .catch((err) => logger.warn(`Subscription cancellation notification error: ${err.message}`));
+
+  const cleanUser = user.toObject();
+  delete cleanUser.password;
+
+  return {
+    subscription: user.subscription,
+    user: cleanUser,
+    alreadyCancelled: false
+  };
+};
+
 module.exports = {
   createOrder,
   verifyPayment,
   processWebhook,
+  cancelSubscription,
   listPayments,
   getPaymentById
 };

@@ -94,6 +94,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ 'subscription.status': 1, 'subscription.currentPeriodEnd': 1 });
+
 // ---------------------------------------------------------------------------
 // Hooks & Instance Methods
 // ---------------------------------------------------------------------------

@@ -40,6 +40,14 @@ const getPlatformAnalytics = async () => {
     offeredApps,
     rejectedApps,
     withdrawnApps,
+    totalTransactions,
+    successfulPayments,
+    failedPayments,
+    refundedPayments,
+    activeSubscriptions,
+    expiredSubscriptions,
+    cancelledSubscriptions,
+    revenueAggregation,
     recentUsers,
     recentApplications
   ] = await Promise.all([
@@ -59,6 +67,17 @@ const getPlatformAnalytics = async () => {
     Application.countDocuments({ status: 'offered' }),
     Application.countDocuments({ status: 'rejected' }),
     Application.countDocuments({ status: 'withdrawn' }),
+    Payment.countDocuments(),
+    Payment.countDocuments({ status: 'paid' }),
+    Payment.countDocuments({ status: 'failed' }),
+    Payment.countDocuments({ status: 'refunded' }),
+    User.countDocuments({ 'subscription.status': 'active' }),
+    User.countDocuments({ 'subscription.status': 'expired' }),
+    User.countDocuments({ 'subscription.status': 'cancelled' }),
+    Payment.aggregate([
+      { $match: { status: 'paid' } },
+      { $group: { _id: null, totalPaise: { $sum: '$amount' } } }
+    ]),
     User.find()
       .select('name email role subscription createdAt')
       .sort({ createdAt: -1 })
@@ -71,6 +90,9 @@ const getPlatformAnalytics = async () => {
       .limit(5)
       .lean()
   ]);
+
+  const totalPaise = revenueAggregation.length > 0 ? revenueAggregation[0].totalPaise : 0;
+  const totalRevenueINR = Math.round(totalPaise / 100);
 
   return {
     overview: {
@@ -85,6 +107,16 @@ const getPlatformAnalytics = async () => {
       activeJobs,
       totalSavedJobs,
       totalApplications
+    },
+    billingStats: {
+      totalRevenueINR,
+      totalTransactions,
+      successfulPayments,
+      failedPayments,
+      refundedPayments,
+      activeSubscriptions,
+      expiredSubscriptions,
+      cancelledSubscriptions
     },
     applicationsByStage: {
       applied: appliedApps,

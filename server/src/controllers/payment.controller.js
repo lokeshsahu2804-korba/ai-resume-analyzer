@@ -66,10 +66,28 @@ const getPaymentById = asyncHandler(async (req, res) => {
   return ApiResponse.success(res, { payment }, 'Payment details retrieved successfully');
 });
 
+/**
+ * @desc    Cancel authenticated candidate's active Premium subscription
+ * @route   POST /api/payments/cancel-subscription
+ * @access  Protected (Candidate)
+ */
+const cancelSubscription = asyncHandler(async (req, res) => {
+  const result = await paymentService.cancelSubscription(req.user._id);
+
+  return ApiResponse.success(
+    res,
+    result,
+    result.alreadyCancelled
+      ? 'Subscription is already cancelled'
+      : 'Subscription cancelled successfully. You retain Premium access until the end of your billing period.'
+  );
+});
+
 module.exports = {
   createOrder,
   verifyPayment,
   handleWebhook,
+  cancelSubscription,
   listPayments,
   getPaymentById
 };

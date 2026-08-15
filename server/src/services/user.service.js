@@ -3,7 +3,9 @@
  */
 
 const User = require('../models/User');
+const notificationService = require('./notification.service');
 const ApiError = require('../utils/ApiError');
+const logger = require('../utils/logger');
 
 /**
  * Retrieves full user profile and account limits by user ID.
@@ -83,6 +85,36 @@ const getSubscriptionInfo = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
     throw ApiError.notFound('User account not found');
+  }
+
+  // Lazy Expiration Check: Downgrade on read if currentPeriodEnd is reached
+  const now = new Date();
+  if (
+    (user.plan === 'premium' || user.subscription?.status === 'active' || user.subscription?.status === 'cancelled') &&
+    user.subscription?.currentPeriodEnd &&
+    new Date(user.subscription.currentPeriodEnd) <= now
+  ) {
+    logger.info(`[Lazy Expiration] User ${userId} subscription ended on ${user.subscription.currentPeriodEnd}. Downgrading to Free tier.`);
+    user.plan = 'free';
+    user.subscription.plan = 'free';
+    user.subscription.status = 'expired';
+    user.usageLimits.resumeAnalysesLimit = 3;
+
+    await user.save();
+
+    // Non-blocking notification dispatch
+    notificationService
+      .sendNotification({
+        userId: user._id,
+        type: 'subscription_expired',
+        title: 'Premium Pro Subscription Expired',
+        message: 'Your 30-day Premium Pro access period has ended. You have been switched to the Free tier (3 analyses/month). Renew anytime to regain unlimited AI analyses.',
+        data: {
+          expiredAt: now,
+          plan: 'free'
+        }
+      })
+      .catch((err) => logger.warn(`[Lazy Expiration] Notification dispatch error: ${err.message}`));
   }
 
   return {
