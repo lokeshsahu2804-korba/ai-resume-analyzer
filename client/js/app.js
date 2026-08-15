@@ -5,6 +5,7 @@
 
 import { renderNavbar } from './components/navbar.js';
 import { renderSidebar } from './components/sidebar.js';
+import { renderNotificationBell } from './components/notifications.js';
 import { initModals } from './components/modal.js';
 import { renderIcons } from './utils/dom.js';
 
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render layout mounts
   renderNavbar();
   renderSidebar();
+  renderNotificationBell();
 
   // Initialize modal event listeners
   initModals();
