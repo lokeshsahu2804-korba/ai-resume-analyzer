@@ -9,6 +9,7 @@ const Job = require('../models/Job');
 const Resume = require('../models/Resume');
 const ApiError = require('../utils/ApiError');
 const logger = require('../utils/logger');
+const notificationService = require('./notification.service');
 const { getUserActiveResume, computeDeterministicJobMatch } = require('./jobMatching.service');
 
 const VALID_TRANSITIONS = {
@@ -90,6 +91,24 @@ const createApplication = async ({ userId, jobId, resumeId, notes = '', intervie
 
     await existingApp.save();
     logger.info(`Reapplication submitted for user ${userId} on job ${jobId} (score: ${matchScoreSnapshot}%)`);
+
+    // Non-blocking notification dispatch
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'application_submitted',
+        title: 'Application Submitted',
+        message: `You applied for ${job.title} at ${job.company}.`,
+        data: {
+          applicationId: existingApp._id,
+          jobId: job._id,
+          jobTitle: job.title,
+          company: job.company,
+          matchScore: matchScoreSnapshot
+        }
+      })
+      .catch((err) => logger.warn(`Notification dispatch error: ${err.message}`));
+
     return existingApp;
   }
 
@@ -113,6 +132,24 @@ const createApplication = async ({ userId, jobId, resumeId, notes = '', intervie
   });
 
   logger.info(`New application ${newApp._id} created for user ${userId} on job ${jobId} (score: ${matchScoreSnapshot}%)`);
+
+  // Non-blocking notification dispatch
+  notificationService
+    .sendNotification({
+      userId,
+      type: 'application_submitted',
+      title: 'Application Submitted',
+      message: `You applied for ${job.title} at ${job.company}.`,
+      data: {
+        applicationId: newApp._id,
+        jobId: job._id,
+        jobTitle: job.title,
+        company: job.company,
+        matchScore: matchScoreSnapshot
+      }
+    })
+    .catch((err) => logger.warn(`Notification dispatch error: ${err.message}`));
+
   return newApp;
 };
 
@@ -212,12 +249,85 @@ const updateApplication = async (applicationId, userId, { status, notes, intervi
     application.notes = notes;
   }
 
+  const interviewDateChanged = interviewDate !== undefined && interviewDate !== null && (!application.interviewDate || new Date(interviewDate).getTime() !== new Date(application.interviewDate).getTime());
+
   if (interviewDate !== undefined) {
     application.interviewDate = interviewDate ? new Date(interviewDate) : null;
   }
 
   await application.save();
   logger.info(`Application ${applicationId} updated: status=${application.status}`);
+
+  // Fetch populated job information for descriptive notification messages
+  (async () => {
+    try {
+      const populatedApp = await Application.findById(application._id).populate('jobId', 'title company').lean();
+      const jobTitle = populatedApp?.jobId?.title || 'Job Listing';
+      const company = populatedApp?.jobId?.company || 'Company';
+
+      // 1. Stage transition notification
+      if (status && status !== application.statusHistory[application.statusHistory.length - 2]?.status) {
+        let notifType = 'application_status_changed';
+        let notifTitle = 'Application Status Updated';
+        let notifMsg = `Stage changed to ${status.charAt(0).toUpperCase() + status.slice(1)} for ${jobTitle} at ${company}.`;
+
+        if (status === 'interviewing') {
+          notifType = 'application_status_changed';
+          notifTitle = 'Application Moved to Interviewing';
+          notifMsg = `Congratulations! Your application for ${jobTitle} at ${company} moved to Interviewing.`;
+        } else if (status === 'offered') {
+          notifType = 'offer_received';
+          notifTitle = 'Job Offer Received!';
+          notifMsg = `Exciting news! You received an offer for ${jobTitle} at ${company}.`;
+        } else if (status === 'rejected') {
+          notifType = 'application_rejected';
+          notifTitle = 'Application Status Update';
+          notifMsg = `Update regarding your application for ${jobTitle} at ${company}.`;
+        } else if (status === 'withdrawn') {
+          notifType = 'application_withdrawn';
+          notifTitle = 'Application Withdrawn';
+          notifMsg = `You withdrew your application for ${jobTitle} at ${company}.`;
+        }
+
+        await notificationService.sendNotification({
+          userId,
+          type: notifType,
+          title: notifTitle,
+          message: notifMsg,
+          data: {
+            applicationId: application._id,
+            jobId: populatedApp?.jobId?._id || application.jobId,
+            jobTitle,
+            company,
+            status
+          }
+        });
+      }
+
+      // 2. Interview date scheduling notification
+      if (interviewDateChanged && application.interviewDate) {
+        const formattedDate = new Date(application.interviewDate).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        await notificationService.sendNotification({
+          userId,
+          type: 'interview_scheduled',
+          title: 'Interview Scheduled',
+          message: `Interview scheduled for ${jobTitle} on ${formattedDate}.`,
+          data: {
+            applicationId: application._id,
+            jobId: populatedApp?.jobId?._id || application.jobId,
+            interviewDate: application.interviewDate
+          }
+        });
+      }
+    } catch (err) {
+      logger.warn(`Application update notification dispatch error: ${err.message}`);
+    }
+  })();
 
   return application;
 };

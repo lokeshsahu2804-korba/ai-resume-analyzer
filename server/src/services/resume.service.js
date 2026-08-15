@@ -8,6 +8,7 @@ const ApiError = require('../utils/ApiError');
 const logger = require('../utils/logger');
 const { deleteFile } = require('../config/cloudinary');
 const { extractAndParseResume } = require('./fastapi.service');
+const notificationService = require('./notification.service');
 
 /**
  * Creates a new Resume document from uploaded file metadata.
@@ -67,11 +68,41 @@ const processResumeById = async (resumeId, userId) => {
     await resume.save();
     logger.info(`Resume ${resume._id} successfully parsed: ${result.parsed.skills?.length || 0} skills found`);
 
+    // Non-blocking notification dispatch
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'resume_processed',
+        title: 'Resume Processed',
+        message: `"${resume.file?.originalName || 'Resume'}" parsed successfully (${result.parsed.skills?.length || 0} skills detected).`,
+        data: {
+          resumeId: resume._id,
+          skillsCount: result.parsed.skills?.length || 0,
+          originalName: resume.file?.originalName
+        }
+      })
+      .catch((nErr) => logger.warn(`Resume notification error: ${nErr.message}`));
+
     return resume;
   } catch (err) {
     logger.error(`Failed to process resume ${resume._id}: ${err.message}`);
     resume.status = 'failed';
     await resume.save().catch(() => {});
+
+    // Non-blocking error notification dispatch
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'resume_processing_failed',
+        title: 'Resume Processing Failed',
+        message: `We could not parse text from "${resume.file?.originalName || 'uploaded resume'}". Please verify the PDF format.`,
+        data: {
+          resumeId: resume._id,
+          error: err.message
+        }
+      })
+      .catch((nErr) => logger.warn(`Resume error notification failed: ${nErr.message}`));
+
     throw err;
   }
 };

@@ -9,6 +9,7 @@ const ResumeAnalysis = require('../models/ResumeAnalysis');
 const ApiError = require('../utils/ApiError');
 const logger = require('../utils/logger');
 const { analyzeResumeWithFastAPI } = require('./fastapi.service');
+const notificationService = require('./notification.service');
 const { processResumeById } = require('./resume.service');
 
 /**
@@ -95,6 +96,38 @@ const analyzeResume = async ({ userId, resumeId, jobDescription }) => {
     logger.info(
       `Analysis ${analysis._id} completed for user ${userId}. Score: ${analysis.atsScore.overall}. Quota used: ${user.usageLimits.resumeAnalysesUsed}/${limit}`
     );
+
+    // Non-blocking notification dispatch: Analysis Complete
+    notificationService
+      .sendNotification({
+        userId,
+        type: 'analysis_complete',
+        title: 'ATS Analysis Ready',
+        message: `Your resume scored ${analysis.atsScore?.overall || 0}/100 in ATS compatibility.`,
+        data: {
+          analysisId: analysis._id,
+          resumeId: resume._id,
+          overallScore: analysis.atsScore?.overall,
+          categoryRatings: analysis.categoryRatings
+        }
+      })
+      .catch((nErr) => logger.warn(`Analysis complete notification error: ${nErr.message}`));
+
+    // Quota Warning Notification if quota is now exhausted
+    if (user.usageLimits.resumeAnalysesUsed >= limit && !isPremium) {
+      notificationService
+        .sendNotification({
+          userId,
+          type: 'quota_warning',
+          title: 'Monthly Analysis Quota Reached',
+          message: `You have used ${user.usageLimits.resumeAnalysesUsed}/${limit} free analyses this month. Upgrade to Premium for unlimited AI analysis.`,
+          data: {
+            used: user.usageLimits.resumeAnalysesUsed,
+            limit
+          }
+        })
+        .catch((nErr) => logger.warn(`Quota warning notification error: ${nErr.message}`));
+    }
 
     return analysis;
   } catch (err) {

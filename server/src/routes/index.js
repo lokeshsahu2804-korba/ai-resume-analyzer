@@ -14,6 +14,7 @@ const analysisRoutes = require('./analysis.routes');
 const jobRoutes = require('./job.routes');
 const applicationRoutes = require('./application.routes');
 const adminRoutes = require('./admin.routes');
+const notificationRoutes = require('./notification.routes');
 
 // Route Registrations
 router.use('/health', healthRoutes);
@@ -24,5 +25,6 @@ router.use('/analyses', analysisRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/admin', adminRoutes);
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;

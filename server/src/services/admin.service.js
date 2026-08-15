@@ -15,6 +15,7 @@ const Payment = require('../models/Payment');
 const ApiError = require('../utils/ApiError');
 const logger = require('../utils/logger');
 const { deleteFile } = require('../config/cloudinary');
+const notificationService = require('./notification.service');
 
 /**
  * Retrieves aggregate platform statistics from real MongoDB collections.
@@ -371,6 +372,20 @@ const updateUserPlan = async (targetUserId, { plan, resumeAnalysesLimit, resumeA
 
   await user.save();
   logger.info(`Admin updated plan for user ${targetUserId}: plan=${user.subscription.plan}, limit=${user.usageLimits.resumeAnalysesLimit}`);
+
+  // Non-blocking notification dispatch
+  notificationService
+    .sendNotification({
+      userId: targetUserId,
+      type: 'plan_updated',
+      title: 'Subscription Plan Updated',
+      message: `Your account subscription plan has been updated to ${user.subscription.plan === 'premium' ? 'Premium Pro (Unlimited)' : 'Free Tier'}.`,
+      data: {
+        plan: user.subscription.plan,
+        limit: user.usageLimits.resumeAnalysesLimit
+      }
+    })
+    .catch((nErr) => logger.warn(`Plan update notification failed: ${nErr.message}`));
 
   const cleanUser = user.toObject();
   delete cleanUser.password;
