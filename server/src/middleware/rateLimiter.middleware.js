@@ -6,10 +6,12 @@
 const { rateLimit } = require('express-rate-limit');
 const ApiError = require('../utils/ApiError');
 
+const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+
 // General API Rate Limiter
 const apiLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100, // 100 requests per window
+  max: parseInt(process.env.RATE_LIMIT_MAX, 10) || (isDev ? 1000 : 100), // 1000 in dev/test, 100 in prod
   standardHeaders: true, // Return standard RateLimit headers in response
   legacyHeaders: false,
   handler: (req, res, next) => {
@@ -20,7 +22,7 @@ const apiLimiter = rateLimit({
 // Strict Rate Limiter for Auth Routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 login/signup attempts per 15 minutes
+  max: isDev ? 200 : 20, // 200 in dev/test, 20 in prod
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res, next) => {
