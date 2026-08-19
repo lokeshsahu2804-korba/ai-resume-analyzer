@@ -16,8 +16,7 @@ import { getNotificationTypeMeta, formatRelativeTime } from '../components/notif
 import { socketService } from '../services/socket.service.js';
 import { showToast } from '../components/toast.js';
 import { renderIcons } from '../utils/dom.js';
-
-document.addEventListener('DOMContentLoaded', async () => {
+async function initNotificationsPage() {
   // Authentication Guard
   const isAuthenticated = await authService.requireAuthGuard();
   if (!isAuthenticated) return;
@@ -273,4 +272,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   await loadNotifications(1);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNotificationsPage);
+} else {
+  initNotificationsPage();
+}
