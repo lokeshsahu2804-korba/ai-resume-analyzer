@@ -32,7 +32,8 @@ class SocketService {
       this.socket = io(serverOrigin, {
         auth: { token },
         withCredentials: true,
-        transports: ['websocket', 'polling'],
+        transports: ['polling', 'websocket'],
+        timeout: 10000,
         reconnection: true,
         reconnectionAttempts: 10,
         reconnectionDelay: 2000

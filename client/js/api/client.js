@@ -27,9 +27,14 @@ export async function apiClient(endpoint, options = {}) {
     ...(options.headers || {})
   };
 
+  // 15-second timeout via AbortController/AbortSignal
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), 15000) : null;
+
   const config = {
     ...options,
     headers,
+    signal: options.signal || controller?.signal,
     credentials: 'include' // Enforces sending and receiving httpOnly cookies
   };
 
@@ -39,6 +44,7 @@ export async function apiClient(endpoint, options = {}) {
 
   try {
     const response = await fetch(url, config);
+    if (timeoutId) clearTimeout(timeoutId);
     const result = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -56,9 +62,14 @@ export async function apiClient(endpoint, options = {}) {
 
     return result;
   } catch (err) {
+    if (timeoutId) clearTimeout(timeoutId);
     // Network errors or thrown ApiErrors
     if (!err.statusCode) {
-      err.message = 'Unable to connect to server. Please check your internet connection.';
+      if (err.name === 'AbortError') {
+        err.message = 'Request timed out. Please try again.';
+      } else {
+        err.message = 'Unable to connect to server. Please check your internet connection.';
+      }
     }
     throw err;
   }
