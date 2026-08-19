@@ -82,10 +82,6 @@ export async function renderSidebar(options = {}) {
       </a>
 
       <div class="sidebar__section-title">Account</div>
-      <a href="${basePath}pages/notifications.html" class="sidebar__link ${currentPath.includes('/notifications') ? 'active' : ''}">
-        <i data-lucide="bell"></i>
-        <span>Notifications</span>
-      </a>
       <a href="${basePath}pages/pricing.html" class="sidebar__link ${currentPath.includes('/pricing') ? 'active' : ''}">
         <i data-lucide="credit-card"></i>
         <span>Pricing & Plans</span>
