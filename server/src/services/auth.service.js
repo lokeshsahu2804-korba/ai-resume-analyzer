@@ -43,7 +43,7 @@ const getCookieOptions = () => {
   return {
     httpOnly: true, // Prevents JavaScript/XSS access
     secure: isProduction, // Enforces HTTPS in production
-    sameSite: 'lax', // Protects against CSRF attacks
+    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-domain cookies (Vercel <-> Render)
     maxAge: days * 24 * 60 * 60 * 1000 // Milliseconds
   };
 };

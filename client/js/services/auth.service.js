@@ -28,15 +28,43 @@ class AuthService {
   }
 
   /**
-   * Restores user session from httpOnly cookie on initial page load.
+   * Returns the stored authentication JWT token.
+   * @returns {string|null}
+   */
+  getToken() {
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  }
+
+  /**
+   * Restores user session from localStorage and verifies with backend on initial page load.
    */
   async initAuth() {
     if (this.isInitialized) return this.user;
 
+    // Hydrate cached user from localStorage first for instant client state
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const cachedUser = localStorage.getItem('auth_user');
+        if (cachedUser) {
+          this.user = JSON.parse(cachedUser);
+        }
+      } catch {
+        this.user = null;
+      }
+    }
+
     try {
       const response = await getMeApi();
       this.user = response?.data?.user || null;
+      if (this.user && typeof localStorage !== 'undefined') {
+        localStorage.setItem('auth_user', JSON.stringify(this.user));
+      }
     } catch (err) {
+      // If token is invalid or expired, clear local storage
+      if (err?.statusCode === 401 && typeof localStorage !== 'undefined') {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+      }
       this.user = null;
     } finally {
       this.isInitialized = true;
@@ -54,6 +82,14 @@ class AuthService {
     return this.user;
   }
 
+  updateUser(user) {
+    this.user = user;
+    if (user && typeof localStorage !== 'undefined') {
+      localStorage.setItem('auth_user', JSON.stringify(user));
+    }
+    this.notify();
+  }
+
   isAdmin() {
     return this.user?.role === 'admin';
   }
@@ -65,6 +101,13 @@ class AuthService {
   async signup(name, email, password) {
     const response = await signupApi({ name, email, password });
     this.user = response?.data?.user || null;
+    const token = response?.data?.token || null;
+
+    if (typeof localStorage !== 'undefined') {
+      if (token) localStorage.setItem('auth_token', token);
+      if (this.user) localStorage.setItem('auth_user', JSON.stringify(this.user));
+    }
+
     this.notify();
     return this.user;
   }
@@ -72,6 +115,13 @@ class AuthService {
   async login(email, password) {
     const response = await loginApi({ email, password });
     this.user = response?.data?.user || null;
+    const token = response?.data?.token || null;
+
+    if (typeof localStorage !== 'undefined') {
+      if (token) localStorage.setItem('auth_token', token);
+      if (this.user) localStorage.setItem('auth_user', JSON.stringify(this.user));
+    }
+
     this.notify();
     return this.user;
   }
@@ -80,6 +130,10 @@ class AuthService {
     try {
       await logoutApi();
     } finally {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+      }
       this.user = null;
       this.notify();
       window.location.href = window.location.pathname.includes('/pages/')

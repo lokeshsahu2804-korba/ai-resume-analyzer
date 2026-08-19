@@ -19,8 +19,11 @@ const BASE_URL =
 export async function apiClient(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
+
   const headers = {
     'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 

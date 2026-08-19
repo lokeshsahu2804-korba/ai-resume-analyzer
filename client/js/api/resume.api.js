@@ -19,11 +19,15 @@ const BASE_URL =
  */
 export async function uploadResumeApi(formData) {
   const url = `${BASE_URL}/resumes/upload`;
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
 
   try {
     const response = await fetch(url, {
       method: 'POST',
       body: formData,
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
       credentials: 'include' // Send & receive httpOnly session cookie
     });
 
