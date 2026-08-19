@@ -21,7 +21,7 @@ class SocketService {
     if (this.socket) return this.socket;
 
     const token = authService.getToken();
-    const serverOrigin = API_BASE_URL ? API_BASE_URL.replace('/api', '') : 'http://localhost:5001';
+    const serverOrigin = API_BASE_URL ? API_BASE_URL.replace('/api', '') : 'https://ai-resume-analyzer-rn7x.onrender.com';
 
     if (typeof io === 'undefined') {
       console.warn('Socket.IO client library not loaded from CDN; real-time alerts falling back to REST.');

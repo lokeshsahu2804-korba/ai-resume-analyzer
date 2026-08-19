@@ -4,7 +4,12 @@
 
 import { apiClient } from './client.js';
 
-const BASE_URL = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'http://localhost:5001/api';
+const BASE_URL =
+  typeof API_BASE_URL !== 'undefined'
+    ? API_BASE_URL
+    : typeof window !== 'undefined' && window.API_BASE_URL
+      ? window.API_BASE_URL
+      : 'https://ai-resume-analyzer-rn7x.onrender.com/api';
 
 /**
  * Uploads a multipart/form-data resume PDF file.

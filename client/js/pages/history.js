@@ -73,9 +73,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? '<span class="badge badge--primary">Active</span>'
                 : '';
 
+            const serverOrigin = typeof API_BASE_URL !== 'undefined'
+              ? API_BASE_URL.replace('/api', '')
+              : (typeof window !== 'undefined' && window.API_BASE_URL
+                  ? window.API_BASE_URL.replace('/api', '')
+                  : 'https://ai-resume-analyzer-rn7x.onrender.com');
+
             const resolvedUrl = fileUrl.startsWith('http')
               ? fileUrl
-              : `http://localhost:5001${fileUrl}`;
+              : `${serverOrigin}${fileUrl}`;
 
             return `
               <tr>
