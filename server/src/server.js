@@ -27,7 +27,7 @@ const httpServer = http.createServer(app);
 initSocket(httpServer);
 
 // Start HTTP & WebSocket Server Listener
-const server = httpServer.listen(PORT, () => {
+const server = httpServer.listen(PORT, '0.0.0.0', () => {
   logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
   logger.info(`Health check: http://localhost:${PORT}/api/health`);
   logger.info(`Socket.IO real-time alerts active`);
