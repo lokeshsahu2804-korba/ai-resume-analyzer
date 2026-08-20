@@ -5,11 +5,12 @@
 
 import { authService } from '../services/auth.service.js';
 import { createOrderApi, verifyPaymentApi, getPaymentsApi, cancelSubscriptionApi } from '../api/payment.api.js';
+import { getSubscriptionApi } from '../api/user.api.js';
 import { showToast } from '../components/toast.js';
 import { qs, renderIcons } from '../utils/dom.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const user = authService.getUser();
+  const user = await authService.initAuth();
   const ctaContainer = qs('#premium-cta-container');
   const userStatusBadge = qs('#user-current-plan-badge');
   const alertBanner = qs('#subscription-alert-banner');
@@ -25,14 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      const token = authService.getToken();
-      const res = await fetch('/api/users/subscription', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      const data = await res.json();
+      const data = await getSubscriptionApi();
       const sub = data?.data?.subscription || {};
       const plan = data?.data?.plan || sub.plan || 'free';
       const now = new Date();
